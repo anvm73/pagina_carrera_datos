@@ -1,0 +1,89 @@
+---
+const integrantes = [
+  {
+    nombre: 'Andres Nicolas Vega Moraga',
+    cargo: 'Presidente',
+    foto: '/imagenes/andres.jpeg',
+    nombreColor: 'text-utem-blue',
+    cargoStyle: 'text-utem-purple bg-utem-purple/5',
+  },
+  {
+    nombre: 'Bruno Eduardo Sainz Silva',
+    cargo: 'Vicepresidente',
+    foto: '/imagenes/bruno.jpeg',
+    nombreColor: 'text-utem-purple',
+    cargoStyle: 'text-utem-teal bg-utem-teal/5',
+  },
+  {
+    nombre: 'Juan Cristobal Toledo Fierro',
+    cargo: 'Tesorero',
+    foto: '/imagenes/juan.jpeg',
+    nombreColor: 'text-utem-magenta',
+    cargoStyle: 'text-utem-magenta bg-utem-magenta/5',
+  },
+  {
+    nombre: 'Camilo Andres Cerda Sarabia',
+    cargo: 'Secretario',
+    foto: '/imagenes/camilo.jpeg',
+    nombreColor: 'text-utem-blueLight',
+    cargoStyle: 'text-utem-blueLight bg-utem-blueLight/5',
+  },
+  {
+    nombre: 'Diego Mauricio Gonzalez Vega',
+    cargo: 'Genero estudiantil',
+    foto: '/imagenes/diego.jpg',
+    nombreColor: 'text-utem-purpleDark',
+    cargoStyle: 'text-utem-purpleDark bg-utem-purpleDark/5',
+  },
+  {
+    nombre: 'Welinton Antonio Barrera Mondaca',
+    cargo: 'Comunicaciones',
+    foto: '/imagenes/welinton.jpeg',
+    nombreColor: 'text-utem-green',
+    cargoStyle: 'text-utem-aquaSoft bg-utem-aquaSoft/5',
+  },
+  {
+    nombre: 'Joaquin Ignacio Araya Bustos',
+    cargo: 'Delegado de Recreacion',
+    foto: '/imagenes/joaquin.jpeg',
+    nombreColor: 'text-utem-purpleLight',
+    cargoStyle: 'text-utem-blueLight bg-utem-blueLight/5',
+  },
+];
+---
+
+<section class="py-12 space-y-10 animate-fade-in">
+  <div class="flex flex-col gap-4">
+    <span class="inline-flex items-center gap-2">
+      <div class="h-1 w-8 rounded-full bg-gradient-to-r from-utem-purple to-utem-teal"></div>
+      <p class="text-sm font-bold uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-utem-purple to-utem-teal">Sobre nosotros</p>
+    </span>
+    <h2 class="text-3xl md:text-4xl font-bold text-utem-dark">Centro de Estudiantes ICCD</h2>
+    <p class="max-w-2xl text-utem-dark/80 text-lg leading-relaxed">
+      Representamos a la comunidad ICCD UTEM con foco en proyectos academicos, bienestar y vinculacion con la industria.
+    </p>
+  </div>
+
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {integrantes.map((integrante) => (
+      <article class="group relative rounded-xl border border-utem-gray/50 bg-gradient-card p-5 shadow-subtle hover:shadow-glow hover:border-utem-blue/30 transition-all duration-300 overflow-hidden">
+        <div class="absolute -top-10 -right-10 h-20 w-20 rounded-full bg-gradient-to-r from-utem-blue/10 to-utem-purple/10 blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+
+        <div class="h-48 w-full rounded-lg border border-utem-gray/50 bg-gradient-to-br from-utem-skySoft/20 to-utem-aquaSoft/20 mb-4 overflow-hidden">
+          <img
+            src={integrante.foto}
+            alt={`Foto de ${integrante.nombre}`}
+            class="h-full w-full object-cover object-center"
+            loading="lazy"
+          />
+        </div>
+
+        <div class="space-y-2">
+          <h3 class={`font-bold text-xl ${integrante.nombreColor} group-hover:text-utem-purple transition-colors`}>{integrante.nombre}</h3>
+          <p class={`text-sm font-semibold inline-block px-3 py-1 rounded-full ${integrante.cargoStyle}`}>{integrante.cargo}</p>
+          <p class="text-xs text-utem-dark/70">Ciencia de Datos · UTEM</p>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>

@@ -1,0 +1,77 @@
+{
+  "items": [
+    {
+      "id": "ce-iccd-2024-2026",
+      "name": "Centro de Estudiantes ICCD",
+      "period_label": "2024-2026",
+      "description": "Representamos a la comunidad ICCD UTEM con foco en proyectos academicos, bienestar y vinculacion con la industria.",
+      "is_active": true,
+      "created_at": "2026-03-07T00:33:40.969636+00:00",
+      "members": [
+        {
+          "id": "andres-nicolas-vega-moraga",
+          "name": "Andres Nicolas Vega Moraga",
+          "role": "Presidente",
+          "bio": "",
+          "image_url": "/imagenes/andres.jpeg",
+          "linkedin_url": "https://www.linkedin.com/in/andres-nicolas-vega-moraga-950b3128b/",
+          "created_at": "2026-03-07T00:33:40.969636+00:00"
+        },
+        {
+          "id": "bruno-eduardo-sainz-silva",
+          "name": "Bruno Eduardo Sainz Silva",
+          "role": "Vicepresidente",
+          "bio": "",
+          "image_url": "/imagenes/bruno.jpeg",
+          "linkedin_url": "https://www.linkedin.com/in/brunosainzsilva/",
+          "created_at": "2026-03-07T00:33:40.969636+00:00"
+        },
+        {
+          "id": "juan-cristobal-toledo-fierro",
+          "name": "Juan Cristobal Toledo Fierro",
+          "role": "Tesorero",
+          "bio": "",
+          "image_url": "/imagenes/juan.jpeg",
+          "linkedin_url": "https://www.linkedin.com/in/juan-crist%C3%B3bal-toledo-fierro-83787129b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+          "created_at": "2026-03-07T00:33:40.969636+00:00"
+        },
+        {
+          "id": "camilo-andres-cerda-sarabia",
+          "name": "Camilo Andres Cerda Sarabia",
+          "role": "Secretario",
+          "bio": "",
+          "image_url": "/imagenes/camilo.jpeg",
+          "linkedin_url": "https://www.linkedin.com/in/camilo-cerda-sarabia-12b486228/",
+          "created_at": "2026-03-07T00:33:40.969636+00:00"
+        },
+        {
+          "id": "diego-mauricio-gonzalez-vega",
+          "name": "Diego Mauricio Gonzalez Vega",
+          "role": "Genero estudiantil",
+          "bio": "",
+          "image_url": "/imagenes/diego.jpg",
+          "linkedin_url": "",
+          "created_at": "2026-03-07T00:33:40.969636+00:00"
+        },
+        {
+          "id": "welinton-antonio-barrera-mondaca",
+          "name": "Welinton Antonio Barrera Mondaca",
+          "role": "Comunicaciones",
+          "bio": "",
+          "image_url": "/imagenes/welinton.jpeg",
+          "linkedin_url": "https://www.linkedin.com/in/welinton-barrera-mondaca-5319672b3/",
+          "created_at": "2026-03-07T00:33:40.969636+00:00"
+        },
+        {
+          "id": "joaquin-ignacio-araya-bustos",
+          "name": "Joaquin Ignacio Araya Bustos",
+          "role": "Delegado de Recreacion",
+          "bio": "",
+          "image_url": "/imagenes/joaquin.jpeg",
+          "linkedin_url": "https://www.linkedin.com/in/joaquin-ignacio-araya-bustos-06693622a/",
+          "created_at": "2026-03-07T00:33:40.969636+00:00"
+        }
+      ]
+    }
+  ]
+}

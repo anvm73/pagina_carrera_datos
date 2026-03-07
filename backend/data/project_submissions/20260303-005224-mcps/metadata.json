@@ -1,0 +1,11 @@
+{
+  "id": "20260303-005224-mcps",
+  "author_name": "Andres Nicolas Vega Moraga",
+  "utem_email": "avega@utem.cl",
+  "title": "MCPs",
+  "description": "El repositorio modelcontextprotocol/servers es la colección oficial de implementaciones de referencia que permite conectar modelos de IA con fuentes de datos del mundo real de forma estandarizada. Para un alumno de ciencia de datos, este recurso es fundamental porque ofrece servidores listos para interactuar con PostgreSQL, SQLite, Google Drive y GitHub, eliminando la necesidad de copiar y pegar datos manualmente al permitir que la IA consulte y analice bases de datos locales directamente.",
+  "submission_type": "repo",
+  "repo_url": "https://github.com/modelcontextprotocol/servers",
+  "files": [],
+  "created_at": "2026-03-03T00:52:24.148891+00:00"
+}

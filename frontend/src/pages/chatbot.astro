@@ -1,0 +1,231 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import '../styles/global.css';
+---
+
+<MainLayout>
+  <div class="space-y-8">
+    <header class="rounded-2xl border border-utem-gray/60 bg-white/90 p-6 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wider text-utem-blue">Chatbot</p>
+      <h1 class="section-title">Chatbot del Centro de Estudiantes</h1>
+      <p class="mt-2 text-sm md:text-base text-utem-dark/80 max-w-3xl">
+        Conversa con el asistente del Centro de Estudiantes para resolver dudas frecuentes sobre la carrera,
+        actividades, malla y datos de contacto. El chat se actualiza en tiempo real y verás las respuestas
+        escribirse letra por letra.
+      </p>
+    </header>
+
+    <section class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] items-start">
+      <!-- Ventana principal de chat -->
+      <div
+        class="rounded-2xl border border-utem-gray/70 bg-white/95 shadow-subtle flex flex-col h-[70vh] max-h-[680px] overflow-hidden"
+      >
+        <div
+          id="chat-messages"
+          class="flex-1 overflow-y-auto px-4 py-4 space-y-4 text-sm md:text-[15px] bg-gradient-to-b from-white to-utem-skySoft/10"
+        >
+          <!-- Mensaje inicial del asistente -->
+          <div class="flex items-start gap-3">
+            <div
+              class="mt-0.5 h-8 w-8 rounded-full bg-gradient-to-br from-utem-blue to-utem-purple text-white flex items-center justify-center text-xs font-bold shadow-sm"
+            >
+              CE
+            </div>
+            <div
+              class="max-w-[80%] rounded-2xl rounded-tl-none bg-utem-skySoft/80 px-3 py-2 text-utem-dark/90 shadow-sm whitespace-pre-wrap"
+            >
+              ¡Hola! 👋 Soy el chatbot del Centro de Estudiantes de Ciencia de Datos UTEM.
+              Escríbeme tus dudas sobre la carrera, el CE, actividades, contacto u otra consulta relacionada.
+            </div>
+          </div>
+        </div>
+
+        <form
+          id="chat-form"
+          class="border-t border-utem-gray/50 bg-white/95 px-3 py-3 flex items-center gap-3"
+        >
+          <input
+            id="chat-input"
+            type="text"
+            autocomplete="off"
+            placeholder="Escribe tu pregunta aquí..."
+            class="flex-1 rounded-full border border-utem-gray/60 px-4 py-2 text-sm md:text-[15px] text-utem-dark placeholder:text-utem-dark/50 focus:outline-none focus:ring-2 focus:ring-utem-blue/50 focus:border-utem-blue/70 bg-white/90"
+          />
+          <button
+            type="submit"
+            id="chat-submit"
+            class="inline-flex items-center gap-2 rounded-full bg-gradient-utem px-5 py-2 text-xs md:text-sm font-semibold text-white shadow-md hover:shadow-glowBlue hover:scale-105 active:scale-95 transition-all duration-200"
+          >
+            <span>Enviar</span>
+            <span class="hidden md:inline-block">↵</span>
+          </button>
+        </form>
+
+        <div class="border-t border-utem-gray/40 bg-utem-skySoft/10 px-4 py-2 text-[11px] md:text-xs text-utem-dark/60">
+          El chatbot utiliza un modelo local (Ollama) y documentos ICCD. Para usarlo, asegúrate de tener
+          el servidor de Python del chatbot encendido.
+        </div>
+      </div>
+
+      <!-- Columna lateral con contexto -->
+      <aside class="hidden lg:block space-y-4">
+        <div class="rounded-2xl border border-utem-gray/60 bg-white/95 p-5 shadow-subtle">
+          <h2 class="text-sm font-semibold text-utem-blue mb-2">Sobre este chatbot</h2>
+          <ul class="space-y-1.5 text-xs text-utem-dark/80">
+            <li>• Entrenado con documentos de la carrera y material del CE.</li>
+            <li>• Ideal para dudas rápidas de malla, contacto y actividades.</li>
+            <li>• Corre localmente usando un modelo de lenguaje vía Ollama.</li>
+          </ul>
+        </div>
+
+        <div class="rounded-2xl border border-utem-gray/60 bg-white/95 p-5 shadow-subtle">
+          <h2 class="text-sm font-semibold text-utem-purple mb-2">Recomendaciones de uso</h2>
+          <ul class="space-y-1.5 text-xs text-utem-dark/80">
+            <li>• Formula preguntas claras y concretas.</li>
+            <li>• Evita compartir datos personales sensibles.</li>
+            <li>• Usa el correo oficial para trámites formales.</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    const API_URL = import.meta.env.PUBLIC_CHATBOT_API_URL || '/api/chat';
+
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const chatSubmit = document.getElementById('chat-submit');
+    const chatMessages = document.getElementById('chat-messages');
+
+    /** Historial que se envía al backend (roles: user / assistant) */
+    const history = [];
+    let isSending = false;
+
+    function scrollToBottom() {
+      if (!chatMessages) return;
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function createBubble({ content, sender, isTyping = false }) {
+      const wrapper = document.createElement('div');
+      wrapper.className =
+        sender === 'user'
+          ? 'flex justify-end'
+          : 'flex items-start gap-3';
+
+      let bubble;
+
+      if (sender === 'user') {
+        bubble = document.createElement('div');
+        bubble.className =
+          'max-w-[80%] rounded-2xl rounded-tr-none bg-utem-blue text-white px-3 py-2 text-sm md:text-[15px] shadow-md whitespace-pre-wrap';
+        bubble.textContent = content;
+        wrapper.appendChild(bubble);
+      } else {
+        const avatar = document.createElement('div');
+        avatar.className =
+          'mt-0.5 h-8 w-8 rounded-full bg-gradient-to-br from-utem-blue to-utem-purple text-white flex items-center justify-center text-xs font-bold shadow-sm';
+        avatar.textContent = 'CE';
+
+        bubble = document.createElement('div');
+        bubble.className =
+          'max-w-[80%] rounded-2xl rounded-tl-none bg-utem-skySoft/80 px-3 py-2 text-utem-dark/90 shadow-sm whitespace-pre-wrap';
+
+        if (isTyping) {
+          bubble.innerHTML =
+            '<span class="inline-flex items-center gap-1 text-xs text-utem-dark/70"><span class="w-2 h-2 rounded-full bg-utem-blue animate-pulse"></span>Escribiendo…</span>';
+        } else {
+          bubble.textContent = content;
+        }
+
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(bubble);
+      }
+
+      chatMessages.appendChild(wrapper);
+      scrollToBottom();
+      return bubble;
+    }
+
+    async function sendMessage(message) {
+      if (!API_URL) return;
+
+      isSending = true;
+      chatInput.disabled = true;
+      chatSubmit.disabled = true;
+
+      // burbuja del usuario
+      createBubble({ content: message, sender: 'user' });
+      history.push({ role: 'user', content: message });
+
+      // burbuja de "escribiendo"
+      const typingBubble = createBubble({
+        content: '',
+        sender: 'assistant',
+        isTyping: true,
+      });
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message,
+            history,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Error de red');
+        }
+
+        const data = await response.json();
+        const fullText = (data.reply || '').toString();
+
+        // limpiar burbuja de "escribiendo"
+        typingBubble.textContent = '';
+
+        // efecto de escritura letra por letra
+        const typingSpeed = 18;
+        let i = 0;
+
+        function typeNext() {
+          if (i < fullText.length) {
+            typingBubble.textContent += fullText.charAt(i);
+            i += 1;
+            scrollToBottom();
+            window.requestAnimationFrame(() => {
+              setTimeout(typeNext, typingSpeed);
+            });
+          }
+        }
+
+        typeNext();
+
+        history.push({ role: 'assistant', content: fullText });
+      } catch (error) {
+        typingBubble.textContent =
+          'No se pudo conectar con el servidor del chatbot. Verifica que esté en ejecución.';
+      } finally {
+        isSending = false;
+        chatInput.disabled = false;
+        chatSubmit.disabled = false;
+        chatInput.focus();
+      }
+    }
+
+    if (chatForm && chatInput && chatSubmit && chatMessages) {
+      chatForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (isSending) return;
+        const value = chatInput.value.trim();
+        if (!value) return;
+        chatInput.value = '';
+        sendMessage(value);
+      });
+    }
+  </script>
+</MainLayout>

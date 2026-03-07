@@ -1,0 +1,75 @@
+---
+// Es lo primero y más grande que ve la gente apenas entra al sitio
+export interface Props {
+  title: string;
+  subtitle: string;
+  ctaPrimary: { label: string; href: string };
+  ctaSecondary?: { label: string; href: string };
+  badge?: string;
+  highlight?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+}
+const { title, subtitle, ctaPrimary, ctaSecondary, badge, highlight, imageSrc, imageAlt } = Astro.props;
+---
+
+<section class="relative overflow-hidden rounded-2xl border border-utem-gray bg-gradient-utem px-6 py-12 md:px-12 md:py-20 shadow-glow animate-fade-in">
+  
+  <!-- Efecto de partículas sutiles -->
+  <div class="absolute inset-0 overflow-hidden">
+    <div class="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-utem-purple/10 blur-3xl"></div>
+    <div class="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-utem-blue/10 blur-3xl"></div>
+  </div>
+  
+  <div class="relative max-w-4xl space-y-8 z-10">
+    
+    {badge && (
+      //tamaño de bienvenida
+      <span class="inline-flex items-center gap-2 rounded-md bg-utem-gray px-4 py-2 text-base font-semibold text-utem-dark">
+        {badge}
+      </span>
+    )}
+
+    <h1 class="text-4xl md:text-6xl font-display font-bold leading-tight text-white drop-shadow-lg">
+      {title}
+      {highlight && <span class="block text-utem-skySoft mt-3 text-3xl md:text-4xl font-normal">{highlight}</span>}
+    </h1>
+
+    <p class="text-xl text-white/90 leading-relaxed max-w-2xl">
+      {subtitle}
+    </p>
+
+    <div class="flex flex-wrap gap-4 pt-4 animate-slide-up">
+      <a
+        href={ctaPrimary.href}
+        class="group relative rounded-full bg-white px-8 py-4 text-base font-bold text-utem-blue transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-white/25 active:scale-95"
+      >
+        <span class="relative z-10">{ctaPrimary.label}</span>
+        <div class="absolute inset-0 rounded-full bg-gradient-to-r from-white to-utem-skySoft opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </a>
+      
+      {ctaSecondary && (
+        <a
+          href={ctaSecondary.href}
+          class="group rounded-full border-2 border-white/50 bg-transparent px-8 py-4 text-base font-bold text-white transition-all duration-300 hover:border-white hover:bg-white/10 hover:shadow-lg hover:shadow-white/20"
+        >
+          {ctaSecondary.label}
+          <span class="ml-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">→</span>
+        </a>
+      )}
+    </div>
+
+  </div>
+  
+  <!-- Elementos decorativos -->
+  <div class="absolute bottom-6 right-6 hidden md:flex items-center gap-2 text-white/40 text-sm">
+    <div class="h-1 w-8 rounded-full bg-gradient-to-r from-utem-blueLight to-utem-purple"></div>
+    <span>ICCD UTEM</span>
+  </div>
+</section>
+
+<style>
+  .shadow-glow {
+    box-shadow: 0 20px 40px rgba(0, 93, 164, 0.25), 0 0 60px rgba(138, 43, 226, 0.15);
+  }
+</style>

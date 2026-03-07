@@ -1,0 +1,18 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  icon: string;
+}
+const { title, description, icon } = Astro.props;
+---
+
+<article class="group rounded-md border border-utem-gray bg-white p-5 shadow-none transition hover:border-utem-blue">
+  <div class="flex items-center justify-between">
+    <div class="h-12 w-12 rounded-md bg-utem-gray text-utem-blue grid place-items-center text-xl font-semibold">
+      {icon}
+    </div>
+  </div>
+  <h3 class="mt-4 text-xl font-display font-semibold text-utem-blue">{title}</h3>
+  <p class="mt-2 text-sm text-utem-dark/80">{description}</p>
+</article>

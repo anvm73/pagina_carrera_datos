@@ -1,0 +1,30 @@
+{
+  "name": "ce-iccd-frontend",
+  "version": "1.0.0",
+  "description": "Landing del Centro de Estudiantes ICCD UTEM integrada con showcase Python.",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "dev:host": "astro dev --host",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "keywords": [
+    "astro",
+    "tailwind",
+    "python",
+    "iccd",
+    "utem"
+  ],
+  "author": "Centro de Estudiantes ICCD",
+  "license": "MIT",
+  "devDependencies": {
+    "@astrojs/check": "^0.8.3",
+    "@astrojs/tailwind": "^5.1.0",
+    "astro": "^4.15.3",
+    "autoprefixer": "^10.4.20",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.3"
+  }
+}

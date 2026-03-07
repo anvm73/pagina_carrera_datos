@@ -1,0 +1,41 @@
+{
+  "intro": "Este es un muro conmemorativo para recordar a nuestros companeros titulados, como tambien estar conectados a traves de LinkedIn para una Red de Ciencia de Datos.",
+  "items": [
+    {
+      "id": "esteban-gomez-teran",
+      "full_name": "Esteban Gomez Teran",
+      "summary": "Hola! Soy un Ingeniero Civil en ciencia de datos apasionado por la tecnología y la ciencia de datos, con formación en programación, gestión de bases de datos y estadística.",
+      "graduation_year": 2025,
+      "linkedin_url": "https://www.linkedin.com/in/esteban-alejandro-gómez-terán-01b46226a?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+      "image_url": "/media/alumni/esteban-gomez-teran-1757529207571-1-20260307023629544490.jpg",
+      "created_at": "2026-03-07T02:15:48.065858+00:00"
+    },
+    {
+      "id": "fernanda-constanza-bravo-cornejo",
+      "full_name": "Fernanda Constanza Bravo Cornejo",
+      "summary": "Profesional apasionada por la tecnología, con formación en ciencias tecnológicas y experiencia en investigación aplicada. Me especializo en el análisis de datos, desarrollo de soluciones con inteligencia artificial y gestión de bases de datos utilizando Python y SQL. Destaco por mi capacidad analítica, organización y trabajo en equipo.",
+      "graduation_year": 2025,
+      "linkedin_url": "https://www.linkedin.com/in/fernanda-constanza-bravo-cornejo/",
+      "image_url": "/media/alumni/fernanda-constanza-bravo-cornejo-1756750769378-20260307023910936132.jpg",
+      "created_at": "2026-03-07T02:39:10.937136+00:00"
+    },
+    {
+      "id": "belen-diaz-diaz",
+      "full_name": "Belén Díaz Díaz",
+      "summary": "AI Developer at @Claro Chile |Data Scientist | Ingeniera Civil en Ciencia de Datos",
+      "graduation_year": 2025,
+      "linkedin_url": "https://www.linkedin.com/in/bel%C3%A9n-d%C3%ADaz-d%C3%ADaz/",
+      "image_url": "/media/alumni/belen-diaz-diaz-1756756246202-20260307024040872589.jpg",
+      "created_at": "2026-03-07T02:40:40.872589+00:00"
+    },
+    {
+      "id": "felipe-ignacio-villa-miranda",
+      "full_name": "Felipe Ignacio Villa Miranda",
+      "summary": "Soy un apasionado profesional de la ciencia de datos impulsado por un profundo interés en la programación, la resolución de problemas y el desarrollo de soluciones eficientes y elegantes. Encuentro una gran satisfacción en la construcción de modelos de aprendizaje automático y aprendizaje profundo que descubren patrones ocultos y transforman los datos en información procesable.",
+      "graduation_year": 2025,
+      "linkedin_url": "https://www.linkedin.com/in/felipe-ignacio-villa-miranda-067534327/",
+      "image_url": "/media/alumni/felipe-ignacio-villa-miranda-1743095025915-20260307024603786201.jpg",
+      "created_at": "2026-03-07T02:46:03.787213+00:00"
+    }
+  ]
+}

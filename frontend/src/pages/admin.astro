@@ -1,0 +1,837 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import '../styles/global.css';
+
+const apiBase = (import.meta.env.PUBLIC_PROJECTS_API_URL || '/api').replace(/\/$/, '');
+---
+
+<MainLayout>
+  <div class="space-y-8 animate-fade-in">
+    <header class="rounded-3xl border border-utem-gray/50 bg-gradient-to-r from-utem-blackish via-utem-blueDark to-utem-purple p-8 text-white shadow-glow">
+      <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div class="space-y-3">
+          <p class="text-sm font-bold uppercase tracking-wider text-white/75">Panel de administracion</p>
+          <h1 class="text-4xl font-bold leading-tight">Gestion centralizada del sitio ICCD</h1>
+          <p class="max-w-3xl text-lg text-white/85">
+            Desde aqui puedes editar proyectos, administrar centros, subir presentaciones y mantener el muro del recuerdo.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <button
+            id="refresh-dashboard"
+            type="button"
+            class="rounded-full border border-white/30 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-white/10"
+          >
+            Recargar
+          </button>
+          <button
+            id="logout-button"
+            type="button"
+            class="rounded-full bg-white px-5 py-3 text-sm font-bold text-utem-blue transition-colors hover:bg-slate-100"
+          >
+            Cerrar sesion
+          </button>
+        </div>
+      </div>
+      <p id="dashboard-status" class="mt-4 text-sm text-white/80">Validando sesion...</p>
+    </header>
+
+    <section class="rounded-2xl border border-utem-gray/50 bg-white p-6 shadow-subtle">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="text-sm font-bold uppercase tracking-wider text-utem-blue">Repositorios publicados</p>
+          <h2 class="mt-2 text-2xl font-bold text-utem-dark">Proyectos</h2>
+        </div>
+      </div>
+      <div id="projects-admin-list" class="mt-5 grid gap-4"></div>
+    </section>
+
+    <section class="rounded-2xl border border-utem-gray/50 bg-white p-6 shadow-subtle">
+      <div class="grid gap-6 lg:grid-cols-[380px_1fr]">
+        <div class="rounded-2xl border border-utem-gray/40 bg-gradient-card p-5">
+          <p class="text-sm font-bold uppercase tracking-wider text-utem-purple">Nuevo centro</p>
+          <h2 class="mt-2 text-2xl font-bold text-utem-dark">Integrantes CE</h2>
+          <form id="center-create-form" class="mt-5 grid gap-4">
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Nombre del centro</span>
+              <input name="name" type="text" required class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Centro de Estudiantes ICCD" />
+            </label>
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Periodo</span>
+              <input name="period_label" type="text" required class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="2026-2027" />
+            </label>
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Descripcion</span>
+              <textarea name="description" rows="4" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Enfoque y objetivos del periodo."></textarea>
+            </label>
+            <label class="inline-flex items-center gap-3 text-sm font-semibold text-utem-dark">
+              <input name="is_active" type="checkbox" class="h-4 w-4 rounded border-utem-gray/60 text-utem-blue focus:ring-utem-blue" />
+              Marcar como centro activo
+            </label>
+            <button type="submit" class="rounded-full bg-gradient-utem px-5 py-3 text-sm font-bold text-white transition-all hover:shadow-glowBlue">
+              Crear centro
+            </button>
+          </form>
+        </div>
+        <div>
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="text-sm font-bold uppercase tracking-wider text-utem-purple">Centros cargados</p>
+              <h3 class="mt-2 text-2xl font-bold text-utem-dark">Equipos y archivo</h3>
+            </div>
+          </div>
+          <div id="centers-admin-list" class="mt-5 grid gap-5"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rounded-2xl border border-utem-gray/50 bg-white p-6 shadow-subtle">
+      <div class="grid gap-6 lg:grid-cols-[360px_1fr]">
+        <div class="rounded-2xl border border-utem-gray/40 bg-gradient-card p-5">
+          <p class="text-sm font-bold uppercase tracking-wider text-utem-blue">Nueva presentacion</p>
+          <h2 class="mt-2 text-2xl font-bold text-utem-dark">PDFs</h2>
+          <form id="presentation-create-form" class="mt-5 grid gap-4">
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Titulo</span>
+              <input name="title" type="text" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Bienvenida 2027" />
+            </label>
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Descripcion</span>
+              <textarea name="description" rows="4" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Contexto del documento."></textarea>
+            </label>
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Archivo PDF</span>
+              <input name="pdf" type="file" accept="application/pdf" required class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-utem-blue/10 file:px-3 file:py-1 file:text-utem-blue" />
+            </label>
+            <button type="submit" class="rounded-full bg-gradient-utem px-5 py-3 text-sm font-bold text-white transition-all hover:shadow-glowBlue">
+              Subir presentacion
+            </button>
+          </form>
+        </div>
+        <div>
+          <p class="text-sm font-bold uppercase tracking-wider text-utem-blue">Presentaciones publicadas</p>
+          <div id="presentations-admin-list" class="mt-5 grid gap-4"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rounded-2xl border border-utem-gray/50 bg-white p-6 shadow-subtle">
+      <div class="grid gap-6 lg:grid-cols-[420px_1fr]">
+        <div class="rounded-2xl border border-utem-gray/40 bg-gradient-card p-5">
+          <p class="text-sm font-bold uppercase tracking-wider text-utem-purple">Nuevo titulado</p>
+          <h2 class="mt-2 text-2xl font-bold text-utem-dark">Muro del recuerdo</h2>
+          <p class="mt-2 text-sm text-utem-dark/70">
+            El autocompletado desde LinkedIn funciona en modo best-effort y depende de que el perfil sea publico.
+          </p>
+          <form id="alumni-create-form" class="mt-5 grid gap-4">
+            <input type="hidden" name="image_url" value="" />
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Perfil de LinkedIn</span>
+              <div class="flex gap-2">
+                <input name="linkedin_url" type="url" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="https://www.linkedin.com/in/..." />
+                <button id="preview-linkedin-create" type="button" class="rounded-xl border border-utem-purple/40 px-4 py-3 text-sm font-bold text-utem-purple hover:bg-utem-purple/5">
+                  Autocompletar
+                </button>
+              </div>
+            </label>
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Nombre</span>
+              <input name="full_name" type="text" required class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" />
+            </label>
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Cargo o headline</span>
+              <input name="headline" type="text" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" />
+            </label>
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Empresa</span>
+              <input name="company" type="text" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" />
+            </label>
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Ubicacion</span>
+              <input name="location" type="text" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" />
+            </label>
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Ano de titulacion</span>
+              <input name="graduation_year" type="number" required class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="2025" />
+            </label>
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Resumen</span>
+              <textarea name="summary" rows="4" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none"></textarea>
+            </label>
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Imagen asociada</span>
+              <input name="image" type="file" accept="image/*" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-utem-blue/10 file:px-3 file:py-1 file:text-utem-blue" />
+            </label>
+            <button type="submit" class="rounded-full bg-gradient-utem px-5 py-3 text-sm font-bold text-white transition-all hover:shadow-glowBlue">
+              Agregar al muro
+            </button>
+          </form>
+        </div>
+        <div>
+          <p class="text-sm font-bold uppercase tracking-wider text-utem-purple">Tarjetas publicadas</p>
+          <div id="alumni-admin-list" class="mt-5 grid gap-5"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</MainLayout>
+
+<script is:inline define:vars={{ apiBase }}>
+  const tokenKey = 'ce-admin-token';
+  const statusEl = document.getElementById('dashboard-status');
+  const refreshBtn = document.getElementById('refresh-dashboard');
+  const logoutBtn = document.getElementById('logout-button');
+  const projectsListEl = document.getElementById('projects-admin-list');
+  const centerCreateForm = document.getElementById('center-create-form');
+  const centersListEl = document.getElementById('centers-admin-list');
+  const presentationCreateForm = document.getElementById('presentation-create-form');
+  const presentationsListEl = document.getElementById('presentations-admin-list');
+  const alumniCreateForm = document.getElementById('alumni-create-form');
+  const previewLinkedinBtn = document.getElementById('preview-linkedin-create');
+  const alumniListEl = document.getElementById('alumni-admin-list');
+
+  if (
+    !statusEl ||
+    !refreshBtn ||
+    !logoutBtn ||
+    !projectsListEl ||
+    !centerCreateForm ||
+    !centersListEl ||
+    !presentationCreateForm ||
+    !presentationsListEl ||
+    !alumniCreateForm ||
+    !previewLinkedinBtn ||
+    !alumniListEl
+  ) {
+    throw new Error('No se encontro la estructura del panel de administracion.');
+  }
+
+  let dashboardData = {
+    projects: [],
+    centers: [],
+    presentations: [],
+    alumni: [],
+  };
+
+  const escapeHtml = (value) =>
+    (value || '')
+      .toString()
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+
+  const resolveAssetUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.startsWith('/media/') || url.startsWith('/media-db/')) return `${apiBase}${url}`;
+    return url;
+  };
+
+  const initialsFor = (name) =>
+    (name || 'IC')
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() || '')
+      .join('');
+
+  const formatDate = (isoDate) => {
+    if (!isoDate) return 'Sin fecha';
+    const parsed = new Date(isoDate);
+    if (Number.isNaN(parsed.getTime())) return 'Sin fecha';
+    return parsed.toLocaleDateString('es-CL', { year: 'numeric', month: 'short', day: 'numeric' });
+  };
+
+  const setStatus = (message, tone = 'info') => {
+    statusEl.textContent = message;
+    statusEl.classList.remove('text-white/80', 'text-red-200', 'text-green-200');
+    if (tone === 'error') statusEl.classList.add('text-red-200');
+    else if (tone === 'success') statusEl.classList.add('text-green-200');
+    else statusEl.classList.add('text-white/80');
+  };
+
+  const getToken = () => window.localStorage.getItem(tokenKey) || '';
+
+  const authorizedFetch = async (url, options = {}) => {
+    const headers = new Headers(options.headers || {});
+    headers.set('Authorization', `Bearer ${getToken()}`);
+
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
+
+    if (response.status === 401) {
+      window.localStorage.removeItem(tokenKey);
+      window.location.href = '/login';
+      throw new Error('Sesion expirada');
+    }
+
+    return response;
+  };
+
+  const requestJson = async (url, options = {}) => {
+    const response = await authorizedFetch(url, options);
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(payload.detail || 'Error de servidor');
+    }
+    return payload;
+  };
+
+  const renderProjects = () => {
+    if (!dashboardData.projects.length) {
+      projectsListEl.innerHTML = '<p class="text-sm text-utem-dark/70">No hay proyectos publicados.</p>';
+      return;
+    }
+
+    projectsListEl.innerHTML = dashboardData.projects
+      .map(
+        (project) => `
+          <article data-project-id="${escapeHtml(project.id)}" class="rounded-2xl border border-utem-gray/50 bg-gradient-card p-5 shadow-subtle">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-wide text-utem-dark/60">${escapeHtml(project.submission_type || 'proyecto')}</p>
+                <p class="text-sm text-utem-dark/60">${escapeHtml(formatDate(project.created_at))}</p>
+              </div>
+              <div class="flex gap-2">
+                <button data-action="save-project" type="button" class="rounded-full bg-gradient-utem px-4 py-2 text-sm font-bold text-white">Guardar</button>
+                <button data-action="delete-project" type="button" class="rounded-full border border-red-300 px-4 py-2 text-sm font-bold text-red-600">Eliminar</button>
+              </div>
+            </div>
+            <div class="mt-4 grid gap-4 md:grid-cols-2">
+              <label class="space-y-1">
+                <span class="text-xs font-semibold uppercase tracking-wide text-utem-dark/60">Titulo</span>
+                <input data-field="title" type="text" value="${escapeHtml(project.title || '')}" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" />
+              </label>
+              <label class="space-y-1">
+                <span class="text-xs font-semibold uppercase tracking-wide text-utem-dark/60">Autor</span>
+                <input data-field="author_name" type="text" value="${escapeHtml(project.author_name || '')}" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" />
+              </label>
+              <label class="space-y-1">
+                <span class="text-xs font-semibold uppercase tracking-wide text-utem-dark/60">Correo UTEM</span>
+                <input data-field="utem_email" type="email" value="${escapeHtml(project.utem_email || '')}" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" />
+              </label>
+              <label class="space-y-1">
+                <span class="text-xs font-semibold uppercase tracking-wide text-utem-dark/60">Repositorio</span>
+                <input data-field="repo_url" type="url" value="${escapeHtml(project.repo_url || '')}" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" />
+              </label>
+            </div>
+            <label class="mt-4 block space-y-1">
+              <span class="text-xs font-semibold uppercase tracking-wide text-utem-dark/60">Descripcion</span>
+              <textarea data-field="description" rows="4" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none">${escapeHtml(project.description || '')}</textarea>
+            </label>
+          </article>
+        `
+      )
+      .join('');
+  };
+
+  const renderCenters = () => {
+    if (!dashboardData.centers.length) {
+      centersListEl.innerHTML = '<p class="text-sm text-utem-dark/70">No hay centros configurados.</p>';
+      return;
+    }
+
+    centersListEl.innerHTML = dashboardData.centers
+      .map((center) => {
+        const members = Array.isArray(center.members) ? center.members : [];
+        return `
+          <article data-center-id="${escapeHtml(center.id)}" class="rounded-2xl border border-utem-gray/50 bg-gradient-card p-5 shadow-subtle">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-wide text-utem-dark/60">Centro</p>
+                <p class="text-sm text-utem-dark/60">${escapeHtml(formatDate(center.created_at))}</p>
+              </div>
+              <div class="flex gap-2">
+                <button data-action="save-center" type="button" class="rounded-full bg-gradient-utem px-4 py-2 text-sm font-bold text-white">Guardar</button>
+                <button data-action="delete-center" type="button" class="rounded-full border border-red-300 px-4 py-2 text-sm font-bold text-red-600">Eliminar</button>
+              </div>
+            </div>
+
+            <div class="mt-4 grid gap-4 md:grid-cols-2">
+              <label class="space-y-1">
+                <span class="text-xs font-semibold uppercase tracking-wide text-utem-dark/60">Nombre</span>
+                <input data-field="name" type="text" value="${escapeHtml(center.name || '')}" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" />
+              </label>
+              <label class="space-y-1">
+                <span class="text-xs font-semibold uppercase tracking-wide text-utem-dark/60">Periodo</span>
+                <input data-field="period_label" type="text" value="${escapeHtml(center.period_label || '')}" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" />
+              </label>
+            </div>
+
+            <label class="mt-4 block space-y-1">
+              <span class="text-xs font-semibold uppercase tracking-wide text-utem-dark/60">Descripcion</span>
+              <textarea data-field="description" rows="3" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none">${escapeHtml(center.description || '')}</textarea>
+            </label>
+
+            <label class="mt-4 inline-flex items-center gap-3 text-sm font-semibold text-utem-dark">
+              <input data-field="is_active" type="checkbox" class="h-4 w-4 rounded border-utem-gray/60 text-utem-blue focus:ring-utem-blue" ${center.is_active ? 'checked' : ''} />
+              Centro activo
+            </label>
+
+            <div class="mt-6 space-y-4 rounded-2xl border border-utem-gray/40 bg-white p-4">
+              <div class="flex items-center justify-between gap-3">
+                <h3 class="text-lg font-bold text-utem-dark">Integrantes</h3>
+                <span class="text-sm text-utem-dark/60">${members.length} integrante(s)</span>
+              </div>
+
+              <div class="grid gap-4">
+                ${members.length ? members.map((member) => {
+                  const imageUrl = resolveAssetUrl(member.image_url || '');
+                  return `
+                    <div data-member-id="${escapeHtml(member.id)}" class="rounded-2xl border border-utem-gray/40 bg-gradient-card p-4">
+                      <div class="grid gap-4 lg:grid-cols-[140px_1fr]">
+                        <div class="overflow-hidden rounded-2xl border border-utem-gray/40 bg-gradient-to-br from-utem-skySoft/30 to-white">
+                          ${imageUrl
+                            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(member.name || 'Integrante')}" class="h-36 w-full object-cover" loading="lazy" />`
+                            : `<div class="flex h-36 items-center justify-center text-3xl font-bold text-utem-blue">${escapeHtml(initialsFor(member.name))}</div>`
+                          }
+                        </div>
+                        <div class="grid gap-3">
+                          <div class="grid gap-3 md:grid-cols-2">
+                            <input data-field="name" type="text" value="${escapeHtml(member.name || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Nombre" />
+                            <input data-field="role" type="text" value="${escapeHtml(member.role || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Cargo" />
+                          </div>
+                          <input data-field="linkedin_url" type="url" value="${escapeHtml(member.linkedin_url || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="LinkedIn" />
+                          <textarea data-field="bio" rows="3" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Breve bio">${escapeHtml(member.bio || '')}</textarea>
+                          <input data-field="image" type="file" accept="image/*" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-utem-blue/10 file:px-3 file:py-1 file:text-utem-blue" />
+                          <div class="flex gap-2">
+                            <button data-action="save-member" type="button" class="rounded-full bg-gradient-utem px-4 py-2 text-sm font-bold text-white">Guardar integrante</button>
+                            <button data-action="delete-member" type="button" class="rounded-full border border-red-300 px-4 py-2 text-sm font-bold text-red-600">Eliminar integrante</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                }).join('') : '<p class="text-sm text-utem-dark/70">Este centro aun no tiene integrantes.</p>'}
+              </div>
+
+              <form class="create-member-form rounded-2xl border border-dashed border-utem-blue/30 bg-utem-blue/5 p-4">
+                <p class="text-sm font-bold uppercase tracking-wide text-utem-blue">Agregar integrante</p>
+                <div class="mt-3 grid gap-3 md:grid-cols-2">
+                  <input name="name" type="text" required class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Nombre completo" />
+                  <input name="role" type="text" required class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Cargo" />
+                </div>
+                <input name="linkedin_url" type="url" class="mt-3 w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="LinkedIn" />
+                <textarea name="bio" rows="3" class="mt-3 w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Breve bio"></textarea>
+                <input name="image" type="file" accept="image/*" class="mt-3 w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-utem-blue/10 file:px-3 file:py-1 file:text-utem-blue" />
+                <button type="submit" class="mt-3 rounded-full bg-gradient-utem px-4 py-2 text-sm font-bold text-white">Agregar integrante</button>
+              </form>
+            </div>
+          </article>
+        `;
+      })
+      .join('');
+  };
+
+  const renderPresentations = () => {
+    if (!dashboardData.presentations.length) {
+      presentationsListEl.innerHTML = '<p class="text-sm text-utem-dark/70">No hay presentaciones cargadas.</p>';
+      return;
+    }
+
+    presentationsListEl.innerHTML = dashboardData.presentations
+      .map((item) => {
+        const pdfUrl = resolveAssetUrl(item.pdf_url || '');
+        return `
+          <article data-presentation-id="${escapeHtml(item.id)}" class="rounded-2xl border border-utem-gray/50 bg-gradient-card p-5 shadow-subtle">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 class="text-xl font-bold text-utem-dark">${escapeHtml(item.title || 'Presentacion')}</h3>
+                <p class="mt-1 text-sm text-utem-dark/70">${escapeHtml(item.description || '')}</p>
+                <p class="mt-2 text-xs text-utem-dark/55">${escapeHtml(formatDate(item.created_at))}</p>
+              </div>
+              <div class="flex gap-2">
+                <a href="${escapeHtml(pdfUrl)}" target="_blank" rel="noopener noreferrer" class="rounded-full border border-utem-blue/30 px-4 py-2 text-sm font-bold text-utem-blue">Abrir</a>
+                <button data-action="delete-presentation" type="button" class="rounded-full border border-red-300 px-4 py-2 text-sm font-bold text-red-600">Eliminar</button>
+              </div>
+            </div>
+          </article>
+        `;
+      })
+      .join('');
+  };
+
+  const renderAlumni = () => {
+    if (!dashboardData.alumni.length) {
+      alumniListEl.innerHTML = '<p class="text-sm text-utem-dark/70">No hay personas publicadas en el muro.</p>';
+      return;
+    }
+
+    alumniListEl.innerHTML = dashboardData.alumni
+      .map((item) => {
+        const imageUrl = resolveAssetUrl(item.image_url || '');
+        return `
+          <article data-alumni-id="${escapeHtml(item.id)}" class="rounded-2xl border border-utem-gray/50 bg-gradient-card p-5 shadow-subtle">
+            <div class="grid gap-4 lg:grid-cols-[180px_1fr]">
+              <div class="overflow-hidden rounded-2xl border border-utem-gray/40 bg-gradient-to-br from-utem-purple/10 to-white">
+                ${imageUrl
+                  ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.full_name || 'Titulado')}" class="h-48 w-full object-cover" loading="lazy" />`
+                  : `<div class="flex h-48 items-center justify-center text-4xl font-bold text-utem-purple">${escapeHtml(initialsFor(item.full_name))}</div>`
+                }
+              </div>
+              <div class="grid gap-3">
+                <input data-field="image_url" type="hidden" value="${escapeHtml(item.image_url || '')}" />
+                <div class="grid gap-3 md:grid-cols-2">
+                  <input data-field="full_name" type="text" value="${escapeHtml(item.full_name || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Nombre" />
+                  <input data-field="graduation_year" type="number" value="${escapeHtml(item.graduation_year || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Ano" />
+                </div>
+                <div class="grid gap-3 md:grid-cols-2">
+                  <input data-field="headline" type="text" value="${escapeHtml(item.headline || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Headline" />
+                  <input data-field="company" type="text" value="${escapeHtml(item.company || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Empresa" />
+                </div>
+                <input data-field="location" type="text" value="${escapeHtml(item.location || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Ubicacion" />
+                <input data-field="linkedin_url" type="url" value="${escapeHtml(item.linkedin_url || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="LinkedIn" />
+                <textarea data-field="summary" rows="4" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Resumen">${escapeHtml(item.summary || '')}</textarea>
+                <input data-field="image" type="file" accept="image/*" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-utem-blue/10 file:px-3 file:py-1 file:text-utem-blue" />
+                <div class="flex flex-wrap gap-2">
+                  ${item.linkedin_url ? `<a href="${escapeHtml(item.linkedin_url)}" target="_blank" rel="noopener noreferrer" class="rounded-full border border-utem-blue/30 px-4 py-2 text-sm font-bold text-utem-blue">Ver LinkedIn</a>` : ''}
+                  <button data-action="save-alumni" type="button" class="rounded-full bg-gradient-utem px-4 py-2 text-sm font-bold text-white">Guardar</button>
+                  <button data-action="delete-alumni" type="button" class="rounded-full border border-red-300 px-4 py-2 text-sm font-bold text-red-600">Eliminar</button>
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      })
+      .join('');
+  };
+
+  const renderAll = () => {
+    renderProjects();
+    renderCenters();
+    renderPresentations();
+    renderAlumni();
+  };
+
+  const loadDashboard = async () => {
+    setStatus('Cargando datos del panel...');
+
+    const [projectsPayload, centersPayload, presentationsPayload, alumniPayload] = await Promise.all([
+      fetch(`${apiBase}/projects/public`).then((response) => {
+        if (!response.ok) throw new Error('No se pudieron cargar los proyectos');
+        return response.json();
+      }),
+      requestJson(`${apiBase}/admin/centers`),
+      requestJson(`${apiBase}/admin/presentations`),
+      requestJson(`${apiBase}/admin/alumni`),
+    ]);
+
+    dashboardData = {
+      projects: projectsPayload.items || [],
+      centers: centersPayload.items || [],
+      presentations: presentationsPayload.items || [],
+      alumni: alumniPayload.items || [],
+    };
+
+    renderAll();
+    setStatus('Panel actualizado.', 'success');
+  };
+
+  const validateSession = async () => {
+    const token = getToken();
+    if (!token) {
+      window.location.href = '/login';
+      return false;
+    }
+
+    try {
+      const response = await authorizedFetch(`${apiBase}/admin/me`);
+      if (!response.ok) {
+        window.localStorage.removeItem(tokenKey);
+        window.location.href = '/login';
+        return false;
+      }
+      return true;
+    } catch (error) {
+      window.localStorage.removeItem(tokenKey);
+      window.location.href = '/login';
+      return false;
+    }
+  };
+
+  refreshBtn.addEventListener('click', async () => {
+    try {
+      await loadDashboard();
+    } catch (error) {
+      setStatus(error.message || 'No fue posible recargar el panel.', 'error');
+    }
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    window.localStorage.removeItem(tokenKey);
+    window.location.href = '/login';
+  });
+
+  centerCreateForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    try {
+      await requestJson(`${apiBase}/admin/centers`, {
+        method: 'POST',
+        body: new FormData(centerCreateForm),
+      });
+      centerCreateForm.reset();
+      await loadDashboard();
+    } catch (error) {
+      setStatus(error.message || 'No fue posible crear el centro.', 'error');
+    }
+  });
+
+  presentationCreateForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    try {
+      await requestJson(`${apiBase}/admin/presentations`, {
+        method: 'POST',
+        body: new FormData(presentationCreateForm),
+      });
+      presentationCreateForm.reset();
+      await loadDashboard();
+    } catch (error) {
+      setStatus(error.message || 'No fue posible subir la presentacion.', 'error');
+    }
+  });
+
+  const fillAlumniPreview = (payload, form) => {
+    if (!payload || !form) return;
+    const setValue = (name, value) => {
+      const field = form.elements.namedItem(name);
+      if (field && !field.value) field.value = value || '';
+    };
+
+    setValue('full_name', payload.full_name || '');
+    setValue('headline', payload.headline || '');
+    setValue('company', payload.company || '');
+    setValue('location', payload.location || '');
+    setValue('summary', payload.summary || '');
+    const imageField = form.elements.namedItem('image_url');
+    if (imageField) imageField.value = payload.image_url || '';
+  };
+
+  previewLinkedinBtn.addEventListener('click', async () => {
+    const linkedinField = alumniCreateForm.elements.namedItem('linkedin_url');
+    const linkedinUrl = linkedinField ? linkedinField.value.trim() : '';
+    if (!linkedinUrl) {
+      setStatus('Ingresa primero un enlace de LinkedIn.', 'error');
+      return;
+    }
+
+    try {
+      const payload = await requestJson(`${apiBase}/admin/alumni/preview-linkedin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: linkedinUrl }),
+      });
+      fillAlumniPreview(payload.item || {}, alumniCreateForm);
+      setStatus('Datos de LinkedIn cargados en el formulario.', 'success');
+    } catch (error) {
+      setStatus(error.message || 'No fue posible autocompletar desde LinkedIn.', 'error');
+    }
+  });
+
+  alumniCreateForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    try {
+      await requestJson(`${apiBase}/admin/alumni`, {
+        method: 'POST',
+        body: new FormData(alumniCreateForm),
+      });
+      alumniCreateForm.reset();
+      await loadDashboard();
+    } catch (error) {
+      setStatus(error.message || 'No fue posible agregar la tarjeta.', 'error');
+    }
+  });
+
+  projectsListEl.addEventListener('click', async (event) => {
+    const button = event.target.closest('button[data-action]');
+    if (!button) return;
+
+    const card = button.closest('[data-project-id]');
+    if (!card) return;
+    const projectId = card.dataset.projectId;
+
+    if (button.dataset.action === 'delete-project') {
+      if (!window.confirm('Se eliminara este proyecto. Deseas continuar?')) return;
+      try {
+        await requestJson(`${apiBase}/admin/projects/${projectId}`, { method: 'DELETE' });
+        await loadDashboard();
+      } catch (error) {
+        setStatus(error.message || 'No fue posible eliminar el proyecto.', 'error');
+      }
+      return;
+    }
+
+    if (button.dataset.action === 'save-project') {
+      const payload = {};
+      ['title', 'author_name', 'utem_email', 'repo_url', 'description'].forEach((field) => {
+        payload[field] = card.querySelector(`[data-field="${field}"]`)?.value || '';
+      });
+
+      try {
+        await requestJson(`${apiBase}/admin/projects/${projectId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+        await loadDashboard();
+      } catch (error) {
+        setStatus(error.message || 'No fue posible guardar el proyecto.', 'error');
+      }
+    }
+  });
+
+  centersListEl.addEventListener('submit', async (event) => {
+    const form = event.target.closest('.create-member-form');
+    if (!form) return;
+    event.preventDefault();
+
+    const centerCard = form.closest('[data-center-id]');
+    if (!centerCard) return;
+
+    try {
+      await requestJson(`${apiBase}/admin/centers/${centerCard.dataset.centerId}/members`, {
+        method: 'POST',
+        body: new FormData(form),
+      });
+      await loadDashboard();
+    } catch (error) {
+      setStatus(error.message || 'No fue posible agregar el integrante.', 'error');
+    }
+  });
+
+  centersListEl.addEventListener('click', async (event) => {
+    const button = event.target.closest('button[data-action]');
+    if (!button) return;
+
+    const centerCard = button.closest('[data-center-id]');
+    if (!centerCard) return;
+    const centerId = centerCard.dataset.centerId;
+    const memberCard = button.closest('[data-member-id]');
+
+    try {
+      if (button.dataset.action === 'save-center') {
+        const formData = new FormData();
+        formData.append('name', centerCard.querySelector('[data-field="name"]')?.value || '');
+        formData.append('period_label', centerCard.querySelector('[data-field="period_label"]')?.value || '');
+        formData.append('description', centerCard.querySelector('[data-field="description"]')?.value || '');
+        formData.append('is_active', centerCard.querySelector('[data-field="is_active"]')?.checked ? 'true' : 'false');
+        await requestJson(`${apiBase}/admin/centers/${centerId}`, {
+          method: 'PUT',
+          body: formData,
+        });
+        await loadDashboard();
+        return;
+      }
+
+      if (button.dataset.action === 'delete-center') {
+        if (!window.confirm('Se eliminara este centro y todos sus integrantes. Deseas continuar?')) return;
+        await requestJson(`${apiBase}/admin/centers/${centerId}`, { method: 'DELETE' });
+        await loadDashboard();
+        return;
+      }
+
+      if (button.dataset.action === 'save-member' && memberCard) {
+        const memberId = memberCard.dataset.memberId;
+        const formData = new FormData();
+        formData.append('name', memberCard.querySelector('[data-field="name"]')?.value || '');
+        formData.append('role', memberCard.querySelector('[data-field="role"]')?.value || '');
+        formData.append('bio', memberCard.querySelector('[data-field="bio"]')?.value || '');
+        formData.append('linkedin_url', memberCard.querySelector('[data-field="linkedin_url"]')?.value || '');
+        const fileInput = memberCard.querySelector('[data-field="image"]');
+        if (fileInput?.files?.[0]) {
+          formData.append('image', fileInput.files[0]);
+        }
+        await requestJson(`${apiBase}/admin/centers/${centerId}/members/${memberId}`, {
+          method: 'PUT',
+          body: formData,
+        });
+        await loadDashboard();
+        return;
+      }
+
+      if (button.dataset.action === 'delete-member' && memberCard) {
+        const memberId = memberCard.dataset.memberId;
+        if (!window.confirm('Se eliminara este integrante. Deseas continuar?')) return;
+        await requestJson(`${apiBase}/admin/centers/${centerId}/members/${memberId}`, {
+          method: 'DELETE',
+        });
+        await loadDashboard();
+      }
+    } catch (error) {
+      setStatus(error.message || 'No fue posible completar la accion solicitada.', 'error');
+    }
+  });
+
+  presentationsListEl.addEventListener('click', async (event) => {
+    const button = event.target.closest('button[data-action="delete-presentation"]');
+    if (!button) return;
+
+    const card = button.closest('[data-presentation-id]');
+    if (!card) return;
+
+    if (!window.confirm('Se eliminara esta presentacion. Deseas continuar?')) return;
+
+    try {
+      await requestJson(`${apiBase}/admin/presentations/${card.dataset.presentationId}`, {
+        method: 'DELETE',
+      });
+      await loadDashboard();
+    } catch (error) {
+      setStatus(error.message || 'No fue posible eliminar la presentacion.', 'error');
+    }
+  });
+
+  alumniListEl.addEventListener('click', async (event) => {
+    const button = event.target.closest('button[data-action]');
+    if (!button) return;
+
+    const card = button.closest('[data-alumni-id]');
+    if (!card) return;
+    const alumniId = card.dataset.alumniId;
+
+    try {
+      if (button.dataset.action === 'delete-alumni') {
+        if (!window.confirm('Se eliminara esta tarjeta del muro. Deseas continuar?')) return;
+        await requestJson(`${apiBase}/admin/alumni/${alumniId}`, { method: 'DELETE' });
+        await loadDashboard();
+        return;
+      }
+
+      if (button.dataset.action === 'save-alumni') {
+        const formData = new FormData();
+        ['full_name', 'headline', 'company', 'location', 'summary', 'graduation_year', 'linkedin_url', 'image_url'].forEach((field) => {
+          formData.append(field, card.querySelector(`[data-field="${field}"]`)?.value || '');
+        });
+        const fileInput = card.querySelector('[data-field="image"]');
+        if (fileInput?.files?.[0]) {
+          formData.append('image', fileInput.files[0]);
+        }
+        await requestJson(`${apiBase}/admin/alumni/${alumniId}`, {
+          method: 'PUT',
+          body: formData,
+        });
+        await loadDashboard();
+      }
+    } catch (error) {
+      setStatus(error.message || 'No fue posible guardar la tarjeta.', 'error');
+    }
+  });
+
+  const boot = async () => {
+    if (!(await validateSession())) return;
+    try {
+      await loadDashboard();
+    } catch (error) {
+      setStatus(error.message || 'No fue posible cargar el panel.', 'error');
+    }
+  };
+
+  boot();
+</script>

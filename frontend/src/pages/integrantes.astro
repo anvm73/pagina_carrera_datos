@@ -1,0 +1,496 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import '../styles/global.css';
+
+const apiBase = (import.meta.env.PUBLIC_PROJECTS_API_URL || '/api').replace(/\/$/, '');
+---
+
+<MainLayout>
+  <div class="space-y-8 animate-fade-in">
+    <header class="rounded-2xl border border-utem-gray/50 bg-gradient-to-r from-utem-blueDark via-utem-blue to-utem-purple p-8 text-white shadow-glow">
+      <p class="text-sm font-bold uppercase tracking-wider text-white/80">Integrantes CE</p>
+      <h1 class="mt-3 text-4xl font-bold leading-tight">Equipo actual y memoria del Centro de Estudiantes</h1>
+      <p class="mt-3 max-w-3xl text-lg text-white/90">
+        Esta seccion muestra el centro activo y conserva los equipos anteriores como parte del recuerdo institucional.
+      </p>
+    </header>
+
+    <section class="rounded-2xl border border-utem-gray/50 bg-white p-6 shadow-subtle">
+      <div id="active-center-header" class="space-y-2">
+        <p class="text-sm text-utem-dark/70">Cargando centro actual...</p>
+      </div>
+      <div id="active-members" class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"></div>
+    </section>
+
+    <section class="rounded-2xl border border-utem-gray/50 bg-gradient-card p-6 shadow-subtle">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="text-sm font-bold uppercase tracking-wider text-utem-purple">Archivo CE</p>
+          <h2 class="mt-2 text-2xl font-bold text-utem-dark">Centros anteriores</h2>
+        </div>
+      </div>
+      <div id="archived-centers" class="mt-5 grid gap-4"></div>
+    </section>
+
+    <section id="centers-admin-shell" class="hidden space-y-6 rounded-2xl border border-utem-gray/50 bg-white p-6 shadow-subtle">
+      <div class="rounded-2xl border border-utem-gray/40 bg-gradient-card p-5">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p class="text-sm font-bold uppercase tracking-wider text-utem-blue">Edicion del centro actual</p>
+            <h2 class="mt-2 text-2xl font-bold text-utem-dark">Integrantes en tarjetas</h2>
+          </div>
+        </div>
+
+        <div id="current-center-editor" class="mt-5"></div>
+        <div id="current-members-admin" class="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3"></div>
+
+        <form id="current-member-create-form" class="mt-5 rounded-2xl border border-dashed border-utem-blue/30 bg-utem-blue/5 p-5">
+          <p class="text-sm font-bold uppercase tracking-wide text-utem-blue">Agregar integrante al centro actual</p>
+          <div class="mt-4 grid gap-4 md:grid-cols-2">
+            <input name="name" type="text" required class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Nombre completo" />
+            <input name="role" type="text" required class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Cargo" />
+          </div>
+          <input name="linkedin_url" type="url" class="mt-4 w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="LinkedIn" />
+          <textarea name="bio" rows="3" class="mt-4 w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Bio o descripcion corta"></textarea>
+          <input name="image" type="file" accept="image/*" class="mt-4 w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-utem-blue/10 file:px-3 file:py-1 file:text-utem-blue" />
+          <button type="submit" class="mt-4 rounded-full bg-gradient-utem px-5 py-3 text-sm font-bold text-white transition-all hover:shadow-glowBlue">
+            Agregar integrante
+          </button>
+        </form>
+      </div>
+
+      <div class="rounded-2xl border border-utem-gray/40 bg-gradient-card p-5">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p class="text-sm font-bold uppercase tracking-wider text-utem-purple">Nuevo centro</p>
+            <h2 class="mt-2 text-2xl font-bold text-utem-dark">Crear siguiente periodo</h2>
+            <p class="mt-2 text-sm text-utem-dark/70">
+              Al crear un nuevo centro, este pasa a ser el activo y el anterior queda automaticamente en "Centros anteriores".
+            </p>
+          </div>
+          <button id="toggle-new-center" type="button" class="rounded-full border border-utem-purple/30 px-5 py-3 text-sm font-bold text-utem-purple hover:bg-utem-purple/5">
+            Crear nuevo centro
+          </button>
+        </div>
+
+        <div id="new-center-panel" class="hidden mt-6 space-y-5 rounded-2xl border border-dashed border-utem-purple/30 bg-white p-5">
+          <div class="grid gap-4 md:grid-cols-2">
+            <input id="new-center-name" type="text" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Nombre del centro" />
+            <input id="new-center-period" type="text" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Periodo, ej. 2026-2027" />
+          </div>
+          <textarea id="new-center-description" rows="3" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Descripcion del nuevo periodo"></textarea>
+
+          <div class="flex items-center justify-between gap-3">
+            <p class="text-sm font-bold uppercase tracking-wide text-utem-purple">Tarjetitas de integrantes</p>
+            <button id="add-draft-member" type="button" class="rounded-full border border-utem-blue/30 px-4 py-2 text-sm font-bold text-utem-blue hover:bg-utem-blue/5">
+              Agregar tarjetita
+            </button>
+          </div>
+
+          <div id="draft-members" class="grid gap-5 md:grid-cols-2"></div>
+
+          <button id="create-center-btn" type="button" class="rounded-full bg-gradient-utem px-6 py-3 text-sm font-bold text-white transition-all hover:shadow-glowBlue">
+            Crear nuevo centro y publicar
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+</MainLayout>
+
+<script is:inline define:vars={{ apiBase }}>
+  window.CE_API_BASE = apiBase;
+</script>
+
+<script type="module">
+  import {
+    escapeHtml,
+    initialsFor,
+    isAdminSession,
+    requestJson,
+    resolveAssetUrl,
+  } from '/admin-client.js';
+
+  const apiBase = window.CE_API_BASE || '/api';
+  const headerEl = document.getElementById('active-center-header');
+  const membersEl = document.getElementById('active-members');
+  const archivedEl = document.getElementById('archived-centers');
+  const adminShellEl = document.getElementById('centers-admin-shell');
+  const currentCenterEditorEl = document.getElementById('current-center-editor');
+  const currentMembersAdminEl = document.getElementById('current-members-admin');
+  const currentMemberCreateForm = document.getElementById('current-member-create-form');
+  const toggleNewCenterBtn = document.getElementById('toggle-new-center');
+  const newCenterPanelEl = document.getElementById('new-center-panel');
+  const newCenterNameEl = document.getElementById('new-center-name');
+  const newCenterPeriodEl = document.getElementById('new-center-period');
+  const newCenterDescriptionEl = document.getElementById('new-center-description');
+  const addDraftMemberBtn = document.getElementById('add-draft-member');
+  const draftMembersEl = document.getElementById('draft-members');
+  const createCenterBtn = document.getElementById('create-center-btn');
+
+  if (
+    !headerEl ||
+    !membersEl ||
+    !archivedEl ||
+    !adminShellEl ||
+    !currentCenterEditorEl ||
+    !currentMembersAdminEl ||
+    !currentMemberCreateForm ||
+    !toggleNewCenterBtn ||
+    !newCenterPanelEl ||
+    !newCenterNameEl ||
+    !newCenterPeriodEl ||
+    !newCenterDescriptionEl ||
+    !addDraftMemberBtn ||
+    !draftMembersEl ||
+    !createCenterBtn
+  ) {
+    throw new Error('No se encontraron los elementos de la pagina de integrantes.');
+  }
+
+  let adminMode = false;
+  let centers = [];
+
+  const memberPublicCard = (member) => {
+    const imageUrl = resolveAssetUrl(member.image_url || '', apiBase);
+    const linkedIn = member.linkedin_url
+      ? `<a href="${escapeHtml(member.linkedin_url)}" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-utem-blue hover:underline">Ver LinkedIn</a>`
+      : '';
+
+    return `
+      <article class="rounded-2xl border border-utem-gray/50 bg-white p-5 shadow-subtle">
+        <div class="overflow-hidden rounded-2xl border border-utem-gray/40 bg-gradient-to-br from-utem-skySoft/30 to-white">
+          ${
+            imageUrl
+              ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(member.name || 'Integrante')}" class="h-56 w-full object-cover" loading="lazy" />`
+              : `<div class="flex h-56 items-center justify-center text-4xl font-bold text-utem-blue">${escapeHtml(initialsFor(member.name, 'CE'))}</div>`
+          }
+        </div>
+        <div class="mt-4 space-y-2">
+          <h3 class="text-xl font-bold text-utem-dark">${escapeHtml(member.name || 'Integrante')}</h3>
+          <p class="inline-flex rounded-full bg-utem-blue/10 px-3 py-1 text-sm font-semibold text-utem-blue">${escapeHtml(member.role || 'Integrante')}</p>
+          ${
+            member.bio
+              ? `<p class="text-sm leading-relaxed text-utem-dark/75">${escapeHtml(member.bio)}</p>`
+              : '<p class="text-sm text-utem-dark/60">Equipo del Centro de Estudiantes ICCD.</p>'
+          }
+          ${linkedIn}
+        </div>
+      </article>
+    `;
+  };
+
+  const archivedCenterCard = (center) => {
+    const members = Array.isArray(center.members) ? center.members : [];
+    return `
+      <article class="rounded-2xl border border-utem-gray/50 bg-white p-5 shadow-subtle">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h3 class="text-xl font-bold text-utem-dark">${escapeHtml(center.name || 'Centro de Estudiantes')}</h3>
+            <p class="text-sm font-semibold text-utem-purple">${escapeHtml(center.period_label || 'Sin periodo')}</p>
+          </div>
+          <span class="inline-flex rounded-full bg-utem-purple/10 px-3 py-1 text-sm font-semibold text-utem-purple">
+            ${members.length} integrante(s)
+          </span>
+        </div>
+        ${
+          center.description
+            ? `<p class="mt-3 text-sm leading-relaxed text-utem-dark/75">${escapeHtml(center.description)}</p>`
+            : ''
+        }
+        <div class="mt-4 flex flex-wrap gap-2">
+          ${members.map((member) => `<span class="rounded-full border border-utem-gray/50 px-3 py-1 text-sm text-utem-dark/75">${escapeHtml(member.name || '')}</span>`).join('')}
+        </div>
+      </article>
+    `;
+  };
+
+  const adminMemberCard = (member) => {
+    const imageUrl = resolveAssetUrl(member.image_url || '', apiBase);
+    return `
+      <article data-member-id="${escapeHtml(member.id)}" class="rounded-2xl border border-utem-gray/50 bg-white p-4 shadow-subtle">
+        <div class="overflow-hidden rounded-2xl border border-utem-gray/40 bg-gradient-to-br from-utem-skySoft/30 to-white">
+          ${
+            imageUrl
+              ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(member.name || 'Integrante')}" class="h-52 w-full object-cover" loading="lazy" />`
+              : `<div class="flex h-52 items-center justify-center text-4xl font-bold text-utem-blue">${escapeHtml(initialsFor(member.name, 'CE'))}</div>`
+          }
+        </div>
+        <div class="mt-4 grid gap-3">
+          <input data-field="name" type="text" value="${escapeHtml(member.name || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Nombre" />
+          <input data-field="role" type="text" value="${escapeHtml(member.role || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Cargo" />
+          <input data-field="linkedin_url" type="url" value="${escapeHtml(member.linkedin_url || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="LinkedIn" />
+          <textarea data-field="bio" rows="3" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Bio">${escapeHtml(member.bio || '')}</textarea>
+          <input data-field="image" type="file" accept="image/*" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-utem-blue/10 file:px-3 file:py-1 file:text-utem-blue" />
+          <div class="flex gap-2">
+            <button data-action="save-member" type="button" class="rounded-full bg-gradient-utem px-4 py-2 text-sm font-bold text-white">Guardar</button>
+            <button data-action="delete-member" type="button" class="rounded-full border border-red-300 px-4 py-2 text-sm font-bold text-red-600">Eliminar</button>
+          </div>
+        </div>
+      </article>
+    `;
+  };
+
+  const draftMemberCard = () => `
+    <article class="draft-member-card rounded-2xl border border-utem-gray/40 bg-gradient-card p-4 shadow-subtle">
+      <div class="grid gap-3">
+        <input data-field="name" type="text" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Nombre completo" />
+        <input data-field="role" type="text" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Cargo" />
+        <input data-field="linkedin_url" type="url" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="LinkedIn" />
+        <textarea data-field="bio" rows="3" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Bio"></textarea>
+        <input data-field="image" type="file" accept="image/*" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-utem-blue/10 file:px-3 file:py-1 file:text-utem-blue" />
+        <button data-action="remove-draft-member" type="button" class="rounded-full border border-red-300 px-4 py-2 text-sm font-bold text-red-600">Quitar tarjetita</button>
+      </div>
+    </article>
+  `;
+
+  const getActiveCenter = () => centers.find((item) => item.is_active) || centers[0] || null;
+
+  const renderPublic = () => {
+    if (!centers.length) {
+      headerEl.innerHTML = '<p class="text-sm text-utem-dark/70">No hay centros configurados todavia.</p>';
+      membersEl.innerHTML = '';
+      archivedEl.innerHTML = '<p class="text-sm text-utem-dark/70">Sin historial disponible.</p>';
+      currentCenterEditorEl.innerHTML = '';
+      currentMembersAdminEl.innerHTML = '';
+      return;
+    }
+
+    const activeCenter = getActiveCenter();
+    const archivedCenters = centers.filter((item) => item.id !== activeCenter.id);
+    const activeMembers = Array.isArray(activeCenter.members) ? activeCenter.members : [];
+
+    headerEl.innerHTML = `
+      <p class="text-sm font-bold uppercase tracking-wider text-utem-blue">Centro activo</p>
+      <h2 class="text-3xl font-bold text-utem-dark">${escapeHtml(activeCenter.name || 'Centro de Estudiantes')}</h2>
+      <p class="text-lg font-semibold text-utem-purple">${escapeHtml(activeCenter.period_label || '')}</p>
+      <p class="max-w-3xl text-utem-dark/75">${escapeHtml(activeCenter.description || 'Equipo actual del Centro de Estudiantes ICCD.')}</p>
+    `;
+
+    membersEl.innerHTML = activeMembers.length
+      ? activeMembers.map(memberPublicCard).join('')
+      : '<p class="text-sm text-utem-dark/70">Este centro aun no tiene integrantes publicados.</p>';
+
+    archivedEl.innerHTML = archivedCenters.length
+      ? archivedCenters.map(archivedCenterCard).join('')
+      : '<p class="text-sm text-utem-dark/70">Todavia no hay centros anteriores guardados.</p>';
+
+    if (adminMode) {
+      renderAdmin(activeCenter);
+    }
+  };
+
+  const renderAdmin = (activeCenter) => {
+    if (!activeCenter) {
+      currentCenterEditorEl.innerHTML = '<p class="text-sm text-utem-dark/70">No hay centro activo para editar.</p>';
+      currentMembersAdminEl.innerHTML = '';
+      return;
+    }
+
+    currentCenterEditorEl.innerHTML = `
+      <article data-center-id="${escapeHtml(activeCenter.id)}" class="rounded-2xl border border-utem-gray/40 bg-white p-4">
+        <div class="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div class="grid gap-4 md:grid-cols-2">
+            <input data-field="name" type="text" value="${escapeHtml(activeCenter.name || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Nombre del centro" />
+            <input data-field="period_label" type="text" value="${escapeHtml(activeCenter.period_label || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Periodo" />
+          </div>
+          <div class="flex gap-2">
+            <button data-action="save-center" type="button" class="rounded-full bg-gradient-utem px-4 py-2 text-sm font-bold text-white">Guardar centro</button>
+            <button data-action="delete-center" type="button" class="rounded-full border border-red-300 px-4 py-2 text-sm font-bold text-red-600">Eliminar centro</button>
+          </div>
+        </div>
+        <textarea data-field="description" rows="3" class="mt-4 w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Descripcion">${escapeHtml(activeCenter.description || '')}</textarea>
+      </article>
+    `;
+
+    currentMembersAdminEl.innerHTML = (activeCenter.members || []).length
+      ? activeCenter.members.map(adminMemberCard).join('')
+      : '<p class="text-sm text-utem-dark/70">El centro activo aun no tiene integrantes.</p>';
+  };
+
+  const appendDraftCard = () => {
+    draftMembersEl.insertAdjacentHTML('beforeend', draftMemberCard());
+  };
+
+  const loadCenters = async () => {
+    try {
+      const response = await fetch(`${apiBase}/content/centers`);
+      if (!response.ok) throw new Error('No se pudo cargar el equipo');
+      const data = await response.json();
+      centers = Array.isArray(data.items) ? data.items : [];
+      renderPublic();
+    } catch (error) {
+      headerEl.innerHTML = '<p class="text-sm text-red-600">No fue posible cargar los integrantes desde el servidor.</p>';
+      membersEl.innerHTML = '';
+      archivedEl.innerHTML = '';
+    }
+  };
+
+  currentMemberCreateForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!adminMode) return;
+
+    const activeCenter = getActiveCenter();
+    if (!activeCenter) return;
+
+    try {
+      await requestJson(`/admin/centers/${activeCenter.id}/members`, {
+        method: 'POST',
+        body: new FormData(currentMemberCreateForm),
+      }, apiBase);
+      currentMemberCreateForm.reset();
+      await loadCenters();
+    } catch (error) {
+      window.alert(error.message || 'No fue posible agregar el integrante.');
+    }
+  });
+
+  currentCenterEditorEl.addEventListener('click', async (event) => {
+    const button = event.target.closest('button[data-action]');
+    if (!button) return;
+
+    const card = button.closest('[data-center-id]');
+    if (!card) return;
+    const centerId = card.dataset.centerId;
+
+    try {
+      if (button.dataset.action === 'save-center') {
+        const formData = new FormData();
+        formData.append('name', card.querySelector('[data-field="name"]')?.value || '');
+        formData.append('period_label', card.querySelector('[data-field="period_label"]')?.value || '');
+        formData.append('description', card.querySelector('[data-field="description"]')?.value || '');
+        formData.append('is_active', 'true');
+        await requestJson(`/admin/centers/${centerId}`, { method: 'PUT', body: formData }, apiBase);
+        await loadCenters();
+        return;
+      }
+
+      if (button.dataset.action === 'delete-center') {
+        if (!window.confirm('Se eliminara este centro. Deseas continuar?')) return;
+        await requestJson(`/admin/centers/${centerId}`, { method: 'DELETE' }, apiBase);
+        await loadCenters();
+      }
+    } catch (error) {
+      window.alert(error.message || 'No fue posible actualizar el centro.');
+    }
+  });
+
+  currentMembersAdminEl.addEventListener('click', async (event) => {
+    const button = event.target.closest('button[data-action]');
+    if (!button) return;
+
+    const memberCardEl = button.closest('[data-member-id]');
+    if (!memberCardEl) return;
+    const activeCenter = getActiveCenter();
+    if (!activeCenter) return;
+    const memberId = memberCardEl.dataset.memberId;
+
+    try {
+      if (button.dataset.action === 'save-member') {
+        const formData = new FormData();
+        formData.append('name', memberCardEl.querySelector('[data-field="name"]')?.value || '');
+        formData.append('role', memberCardEl.querySelector('[data-field="role"]')?.value || '');
+        formData.append('bio', memberCardEl.querySelector('[data-field="bio"]')?.value || '');
+        formData.append('linkedin_url', memberCardEl.querySelector('[data-field="linkedin_url"]')?.value || '');
+        const imageInput = memberCardEl.querySelector('[data-field="image"]');
+        if (imageInput?.files?.[0]) {
+          formData.append('image', imageInput.files[0]);
+        }
+        await requestJson(`/admin/centers/${activeCenter.id}/members/${memberId}`, { method: 'PUT', body: formData }, apiBase);
+        await loadCenters();
+        return;
+      }
+
+      if (button.dataset.action === 'delete-member') {
+        if (!window.confirm('Se eliminara este integrante. Deseas continuar?')) return;
+        await requestJson(`/admin/centers/${activeCenter.id}/members/${memberId}`, { method: 'DELETE' }, apiBase);
+        await loadCenters();
+      }
+    } catch (error) {
+      window.alert(error.message || 'No fue posible actualizar el integrante.');
+    }
+  });
+
+  toggleNewCenterBtn.addEventListener('click', () => {
+    const open = newCenterPanelEl.classList.toggle('hidden');
+    toggleNewCenterBtn.textContent = open ? 'Crear nuevo centro' : 'Cerrar creador';
+    if (!newCenterPanelEl.classList.contains('hidden') && draftMembersEl.children.length === 0) {
+      appendDraftCard();
+    }
+  });
+
+  addDraftMemberBtn.addEventListener('click', appendDraftCard);
+
+  draftMembersEl.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-action="remove-draft-member"]');
+    if (!button) return;
+    button.closest('.draft-member-card')?.remove();
+  });
+
+  createCenterBtn.addEventListener('click', async () => {
+    if (!adminMode) return;
+
+    const name = newCenterNameEl.value.trim();
+    const period = newCenterPeriodEl.value.trim();
+    const description = newCenterDescriptionEl.value.trim();
+    if (!name || !period) {
+      window.alert('Debes ingresar nombre y periodo para el nuevo centro.');
+      return;
+    }
+
+    try {
+      const centerPayload = new FormData();
+      centerPayload.append('name', name);
+      centerPayload.append('period_label', period);
+      centerPayload.append('description', description);
+      centerPayload.append('is_active', 'true');
+      const created = await requestJson('/admin/centers', {
+        method: 'POST',
+        body: centerPayload,
+      }, apiBase);
+
+      const centerId = created.item?.id;
+      if (!centerId) {
+        throw new Error('No se pudo crear el nuevo centro');
+      }
+
+      const draftCards = Array.from(draftMembersEl.querySelectorAll('.draft-member-card'));
+      for (const draftCard of draftCards) {
+        const memberName = draftCard.querySelector('[data-field="name"]')?.value?.trim() || '';
+        const memberRole = draftCard.querySelector('[data-field="role"]')?.value?.trim() || '';
+        if (!memberName || !memberRole) {
+          continue;
+        }
+
+        const memberPayload = new FormData();
+        memberPayload.append('name', memberName);
+        memberPayload.append('role', memberRole);
+        memberPayload.append('bio', draftCard.querySelector('[data-field="bio"]')?.value || '');
+        memberPayload.append('linkedin_url', draftCard.querySelector('[data-field="linkedin_url"]')?.value || '');
+        const imageInput = draftCard.querySelector('[data-field="image"]');
+        if (imageInput?.files?.[0]) {
+          memberPayload.append('image', imageInput.files[0]);
+        }
+
+        await requestJson(`/admin/centers/${centerId}/members`, {
+          method: 'POST',
+          body: memberPayload,
+        }, apiBase);
+      }
+
+      newCenterNameEl.value = '';
+      newCenterPeriodEl.value = '';
+      newCenterDescriptionEl.value = '';
+      draftMembersEl.innerHTML = '';
+      newCenterPanelEl.classList.add('hidden');
+      toggleNewCenterBtn.textContent = 'Crear nuevo centro';
+      await loadCenters();
+    } catch (error) {
+      window.alert(error.message || 'No fue posible crear el nuevo centro.');
+    }
+  });
+
+  adminMode = await isAdminSession(apiBase);
+  adminShellEl.classList.toggle('hidden', !adminMode);
+  await loadCenters();
+</script>

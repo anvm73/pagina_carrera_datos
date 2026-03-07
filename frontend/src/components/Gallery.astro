@@ -1,0 +1,41 @@
+---
+const placeholder = `data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='240'>
+    <rect width='400' height='240' fill='#005DA4'/>
+    <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle'
+      fill='white' font-family='Inter, Arial, sans-serif' font-size='18'>
+      Imagen no disponible
+    </text>
+  </svg>`
+)}`;
+
+const items = [
+  { src: placeholder, title: 'Chatbot académico', caption: 'FAQ entrenado en contenidos UTEM.' },
+  { src: placeholder, title: 'Visión por computador', caption: 'Prototipo de reconocimiento facial.' },
+  { src: placeholder, title: 'Visualización 3D', caption: 'Gráficos y superficies para divulgación.' },
+  { src: placeholder, title: 'Dashboard CE', caption: 'Avisos, agenda y recursos en un panel.' },
+  { src: placeholder, title: 'Comunidad ICCD', caption: 'Actividades y acompañamiento estudiantil.' },
+  { src: placeholder, title: 'Campus UTEM', caption: 'Infraestructura y laboratorios.' },
+];
+
+
+<section id="gallery" class="py-12 space-y-6">
+  <div class="flex flex-col gap-3">
+    <p class="text-sm font-semibold uppercase tracking-wider text-utem-blue">Galería</p>
+    <h2 class="section-title">Proyectos y comunidad ICCD</h2>
+    <p class="max-w-2xl text-utem-dark/80">
+      Si alguna imagen no está disponible por privacidad, mostramos un marcador institucional mientras se reemplaza.
+    </p>
+  </div>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {items.map((item) => (
+      <figure class="group relative overflow-hidden rounded-md border border-utem-gray bg-white shadow-subtle">
+        <img src={item.src} alt={item.title} class="h-56 w-full object-cover" loading="lazy" />
+        <figcaption class="absolute inset-x-0 bottom-0 bg-white/90 border-t border-utem-gray px-3 py-2 text-sm text-utem-dark">
+          <p class="font-semibold text-utem-blue">{item.title}</p>
+          <p class="text-utem-dark/80">{item.caption}</p>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</section>

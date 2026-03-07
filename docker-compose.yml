@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - ./backend/.env
+    environment:
+      APP_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        PUBLIC_PROJECTS_API_URL: /api
+        PUBLIC_CHATBOT_API_URL: /api/chat
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "4321:80"
+      - "8080:80"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

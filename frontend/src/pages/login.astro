@@ -1,0 +1,303 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import '../styles/global.css';
+
+const apiBase = (import.meta.env.PUBLIC_PROJECTS_API_URL || '/api').replace(/\/$/, '');
+---
+
+<MainLayout>
+  <div class="mx-auto max-w-5xl animate-fade-in">
+    <section class="rounded-3xl border border-utem-gray/50 bg-white p-8 shadow-glow">
+      <p class="text-sm font-bold uppercase tracking-wider text-utem-blue">Acceso CE ICCD</p>
+      <h1 class="mt-3 text-4xl font-bold text-utem-dark">Ingreso y registro</h1>
+      <p class="mt-3 max-w-3xl text-utem-dark/75">
+        Crea tu cuenta con correo <strong>@utem.cl</strong> para usar el apartado Crea. Si ingresas con las credenciales administrativas, entraras igual desde este mismo acceso.
+      </p>
+
+      <div class="mt-8">
+        <section class="rounded-2xl border border-utem-blue/20 bg-utem-blue/5 p-6">
+          <p class="text-sm font-bold uppercase tracking-wide text-utem-blue">Cuenta UTEM</p>
+          <h2 class="mt-2 text-2xl font-bold text-utem-dark">Ingresar</h2>
+
+          <form id="student-login-form" class="mt-5 grid gap-4">
+            <label class="space-y-2">
+              <span class="text-sm font-semibold text-utem-dark">Correo UTEM</span>
+              <input
+                id="student-email"
+                type="email"
+                required
+                class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none"
+                placeholder="nombre@utem.cl"
+              />
+            </label>
+
+            <label class="space-y-2">
+              <span class="text-sm font-semibold text-utem-dark">Clave</span>
+              <input
+                id="student-password"
+                type="password"
+                required
+                class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none"
+                placeholder="Tu clave"
+              />
+            </label>
+
+            <div class="flex flex-wrap items-center gap-3">
+              <button
+                id="student-login-submit"
+                type="submit"
+                class="rounded-full bg-gradient-utem px-6 py-3 text-sm font-bold text-white transition-all hover:shadow-glowBlue"
+              >
+                Ingresar
+              </button>
+              <button
+                id="toggle-register"
+                type="button"
+                class="rounded-full border border-utem-blue/30 px-5 py-3 text-sm font-bold text-utem-blue hover:bg-utem-blue/5"
+              >
+                Crear cuenta
+              </button>
+            </div>
+            <p id="student-login-status" class="text-sm text-utem-dark/70"></p>
+          </form>
+
+          <form id="student-register-form" class="mt-5 hidden grid gap-4 rounded-2xl border border-dashed border-utem-blue/30 bg-white p-5">
+            <p class="text-sm font-bold uppercase tracking-wide text-utem-blue">Registro</p>
+            <label class="space-y-2">
+              <span class="text-sm font-semibold text-utem-dark">Nombre</span>
+              <input
+                id="register-name"
+                type="text"
+                required
+                class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none"
+                placeholder="Nombre y apellido"
+              />
+            </label>
+            <label class="space-y-2">
+              <span class="text-sm font-semibold text-utem-dark">Correo UTEM</span>
+              <input
+                id="register-email"
+                type="email"
+                required
+                class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none"
+                placeholder="nombre@utem.cl"
+              />
+            </label>
+            <label class="space-y-2">
+              <span class="text-sm font-semibold text-utem-dark">Clave</span>
+              <input
+                id="register-password"
+                type="password"
+                required
+                minlength="8"
+                class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none"
+                placeholder="Minimo 8 caracteres"
+              />
+            </label>
+            <button
+              id="student-register-submit"
+              type="submit"
+              class="rounded-full border border-utem-blue/30 px-5 py-3 text-sm font-bold text-utem-blue hover:bg-utem-blue/5"
+            >
+              Crear mi cuenta
+            </button>
+            <p id="student-register-status" class="text-sm text-utem-dark/70"></p>
+          </form>
+        </section>
+      </div>
+    </section>
+  </div>
+</MainLayout>
+
+<script is:inline define:vars={{ apiBase }}>
+  const studentTokenKey = 'ce-student-token';
+  const adminTokenKey = 'ce-admin-token';
+
+  const studentLoginForm = document.getElementById('student-login-form');
+  const studentEmailEl = document.getElementById('student-email');
+  const studentPasswordEl = document.getElementById('student-password');
+  const studentLoginSubmit = document.getElementById('student-login-submit');
+  const studentLoginStatus = document.getElementById('student-login-status');
+  const toggleRegisterBtn = document.getElementById('toggle-register');
+  const studentRegisterForm = document.getElementById('student-register-form');
+  const registerNameEl = document.getElementById('register-name');
+  const registerEmailEl = document.getElementById('register-email');
+  const registerPasswordEl = document.getElementById('register-password');
+  const studentRegisterSubmit = document.getElementById('student-register-submit');
+  const studentRegisterStatus = document.getElementById('student-register-status');
+
+  if (
+    !studentLoginForm ||
+    !studentEmailEl ||
+    !studentPasswordEl ||
+    !studentLoginSubmit ||
+    !studentLoginStatus ||
+    !toggleRegisterBtn ||
+    !studentRegisterForm ||
+    !registerNameEl ||
+    !registerEmailEl ||
+    !registerPasswordEl ||
+    !studentRegisterSubmit ||
+    !studentRegisterStatus
+  ) {
+    throw new Error('No se encontro la pagina de acceso.');
+  }
+
+  const getReturnTo = () => {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get('returnTo') || '/';
+    return raw.startsWith('/') ? raw : '/';
+  };
+
+  const setStatus = (element, message, tone = 'info') => {
+    element.textContent = message;
+    element.classList.remove('text-utem-dark/70', 'text-red-600', 'text-green-700');
+    if (tone === 'error') element.classList.add('text-red-600');
+    else if (tone === 'success') element.classList.add('text-green-700');
+    else element.classList.add('text-utem-dark/70');
+  };
+
+  const setRegisterOpen = (open) => {
+    studentRegisterForm.classList.toggle('hidden', !open);
+    toggleRegisterBtn.textContent = open ? 'Cerrar registro' : 'Crear cuenta';
+  };
+
+  const validateStudentToken = async (token) => {
+    if (!token) return false;
+    try {
+      const response = await fetch(`${apiBase}/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const validateAdminToken = async (token) => {
+    if (!token) return false;
+    try {
+      const response = await fetch(`${apiBase}/admin/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const redirectToReturn = () => {
+    window.location.href = getReturnTo();
+  };
+
+  toggleRegisterBtn.addEventListener('click', () => {
+    setRegisterOpen(studentRegisterForm.classList.contains('hidden'));
+  });
+
+  const requestJson = async (path, body) => {
+    const response = await fetch(`${apiBase}${path}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    const payload = await response.json().catch(() => ({}));
+    return { response, payload };
+  };
+
+  studentLoginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    studentLoginSubmit.disabled = true;
+    setStatus(studentLoginStatus, 'Validando acceso...');
+
+    try {
+      const credentials = {
+        email: studentEmailEl.value.trim(),
+        password: studentPasswordEl.value,
+      };
+      let loginResult = await requestJson('/auth/login', credentials);
+      let tokenKey = studentTokenKey;
+
+      if (!loginResult.response.ok) {
+        loginResult = await requestJson('/admin/login', credentials);
+        tokenKey = adminTokenKey;
+      }
+
+      if (!loginResult.response.ok) {
+        throw new Error(loginResult.payload.detail || 'Correo o clave invalidos');
+      }
+
+      window.localStorage.removeItem(adminTokenKey);
+      window.localStorage.removeItem(studentTokenKey);
+      window.localStorage.setItem(tokenKey, loginResult.payload.token || '');
+      setStatus(studentLoginStatus, 'Sesion iniciada. Redirigiendo...', 'success');
+      redirectToReturn();
+    } catch (error) {
+      setStatus(studentLoginStatus, error.message || 'No fue posible iniciar sesion.', 'error');
+    } finally {
+      studentLoginSubmit.disabled = false;
+    }
+  });
+
+  studentRegisterForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    studentRegisterSubmit.disabled = true;
+    setStatus(studentRegisterStatus, 'Creando cuenta...');
+
+    try {
+      const response = await fetch(`${apiBase}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: registerNameEl.value.trim(),
+          email: registerEmailEl.value.trim(),
+          password: registerPasswordEl.value,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.detail || 'No fue posible crear la cuenta');
+      }
+
+      window.localStorage.removeItem(adminTokenKey);
+      window.localStorage.setItem(studentTokenKey, payload.token || '');
+      setStatus(studentRegisterStatus, 'Cuenta creada. Redirigiendo...', 'success');
+      redirectToReturn();
+    } catch (error) {
+      setStatus(studentRegisterStatus, error.message || 'No fue posible crear la cuenta.', 'error');
+    } finally {
+      studentRegisterSubmit.disabled = false;
+    }
+  });
+
+  const boot = async () => {
+    const adminToken = window.localStorage.getItem(adminTokenKey) || '';
+    const studentToken = window.localStorage.getItem(studentTokenKey) || '';
+
+    if (await validateAdminToken(adminToken)) {
+      redirectToReturn();
+      return;
+    }
+    if (adminToken) {
+      window.localStorage.removeItem(adminTokenKey);
+    }
+
+    if (await validateStudentToken(studentToken)) {
+      redirectToReturn();
+      return;
+    }
+    if (studentToken) {
+      window.localStorage.removeItem(studentTokenKey);
+    }
+  };
+
+  setRegisterOpen(false);
+  boot();
+</script>

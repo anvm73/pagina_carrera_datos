@@ -1,0 +1,74 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import '../styles/global.css';
+---
+
+<MainLayout>
+  <article class="prose prose-slate max-w-4xl prose-headings:font-display prose-headings:font-semibold prose-code:bg-slate-900 prose-code:text-white prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md">
+    <p class="text-sm font-semibold uppercase tracking-wider text-utem-blue">Documentación Python</p>
+    <h1>Primer prototipo de web en Streamlit: <code>testo.py</code></h1>
+    <p>
+      Este fue el primer front del CE ICCD en Streamlit: navegación lateral, avisos, enlace al Drive académico, cards del
+      equipo y un corazón 3D con Plotly. Hoy usamos esta landing en Astro para el público, conservando el código Python
+      como referencia y descarga.
+    </p>
+
+    <div class="not-prose mt-4 flex flex-wrap gap-3">
+      <a
+        class="rounded-md bg-utem-blue px-4 py-2 text-sm font-semibold text-white transition hover:bg-utem-blueDark"
+        href="/downloads/python-code.zip"
+        download
+      >
+        Descargar .zip (testo.py + requirements.txt)
+      </a>
+      <a
+        class="rounded-md border border-utem-gray px-4 py-2 text-sm font-semibold text-utem-dark transition hover:border-utem-blue hover:text-utem-blue"
+        href="/src/assets/python/testo.py"
+        download
+      >
+        Descargar solo testo.py
+      </a>
+    </div>
+
+    <h2>¿Qué problema resuelve?</h2>
+    <ul>
+      <li>Centraliza comunicación: bienvenida, avisos, Drive y contacto.</li>
+      <li>Muestra resultados técnicos: visualización 3D con Plotly y NumPy.</li>
+      <li>Renderiza equipo con imágenes remotas (requests + Base64) dentro de Streamlit.</li>
+    </ul>
+
+    <h2>Tecnologías</h2>
+    <ul>
+      <li>Streamlit para UI y navegación.</li>
+      <li>Plotly (Surface) para el corazón 3D.</li>
+      <li>NumPy y Matplotlib para cálculo y visualización.</li>
+      <li>Requests + Base64 para obtener logos e imágenes desde GitHub.</li>
+    </ul>
+
+    <h2>Instalación local</h2>
+    <pre><code>python -m venv .venv
+source .venv/Scripts/activate  # en Windows: .venv\\Scripts\\activate
+pip install -r requirements.txt
+streamlit run testo.py</code></pre>
+
+    <h2>Casos de uso</h2>
+    <ul>
+      <li>Mostrar avisos y eventos del CE ICCD.</li>
+      <li>Dar acceso al Drive académico.</li>
+      <li>Divulgar el equipo y enlaces de contacto.</li>
+      <li>Presentar una visualización interactiva (corazón 3D) como demostración técnica.</li>
+    </ul>
+
+    <h2>Archivos incluidos</h2>
+    <ul>
+      <li><code>src/assets/python/testo.py</code>: script completo.</li>
+      <li><code>src/assets/python/requirements.txt</code>: dependencias.</li>
+      <li><code>public/downloads/python-code.zip</code>: descarga directa.</li>
+    </ul>
+
+    <p class="mt-8">
+      Para la landing usamos Astro + Tailwind; el código Python se presenta como referencia y no se ejecuta en el
+      navegador.
+    </p>
+  </article>
+</MainLayout>

@@ -1,0 +1,25 @@
+---
+import FeatureCard from './FeatureCard.astro';
+
+export interface Feature {
+  title: string;
+  description: string;
+  icon: string;
+}
+const { features } = Astro.props as { features: Feature[] };
+---
+
+<section id="features" class="space-y-6 py-12">
+  <div class="flex flex-col gap-3">
+    <p class="text-sm font-semibold uppercase tracking-wider text-utem-blue">Lo que ofrece el portal</p>
+    <h2 class="section-title">Aprendizaje aplicado con Python y comunidad UTEM</h2>
+    <p class="max-w-2xl text-utem-dark/80">
+      Hub informativo, recursos académicos y presencia institucional del Centro de Estudiantes ICCD UTEM.
+    </p>
+  </div>
+  <div class="grid gap-6 md:grid-cols-3">
+    {features.map((feature) => (
+      <FeatureCard {...feature} />
+    ))}
+  </div>
+</section>

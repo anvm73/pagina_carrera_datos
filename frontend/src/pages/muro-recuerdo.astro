@@ -1,0 +1,513 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import '../styles/global.css';
+
+const apiBase = (import.meta.env.PUBLIC_PROJECTS_API_URL || '/api').replace(/\/$/, '');
+---
+
+<MainLayout>
+  <div class="space-y-8 animate-fade-in">
+    <header class="relative overflow-hidden rounded-2xl border border-utem-gray/50 bg-gradient-to-r from-utem-purpleDark via-utem-purple to-utem-blue p-8 text-white shadow-glow">
+      <div class="relative z-10 space-y-3">
+        <p class="text-sm font-bold uppercase tracking-wider text-white/80">Muro del recuerdo</p>
+        <h1 class="text-4xl font-bold leading-tight">Red conmemorativa de titulados ICCD</h1>
+        <p id="wall-intro" class="max-w-4xl text-lg text-white/90">
+          Cargando informacion del muro conmemorativo...
+        </p>
+      </div>
+    </header>
+
+    <section class="rounded-2xl border border-utem-gray/50 bg-white p-6 shadow-subtle">
+      <div id="wall-content" class="space-y-10">
+        <p class="text-sm text-utem-dark/70">Cargando tarjetas...</p>
+      </div>
+    </section>
+
+    <section id="wall-admin-shell" class="hidden rounded-2xl border border-utem-gray/50 bg-white p-6 shadow-subtle">
+      <p class="text-sm font-bold uppercase tracking-wider text-utem-purple">Gestion del muro</p>
+      <h2 class="mt-2 text-2xl font-bold text-utem-dark">Texto y nuevas tarjetas</h2>
+
+      <form id="wall-intro-form" class="mt-5 grid gap-3 rounded-2xl border border-utem-gray/40 bg-gradient-card p-4">
+        <p class="text-sm font-bold uppercase tracking-wide text-utem-purple">Texto de introduccion</p>
+        <textarea id="wall-intro-input" rows="4" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none"></textarea>
+        <button type="submit" class="rounded-full border border-utem-purple/30 px-4 py-2 text-sm font-bold text-utem-purple">Guardar introduccion</button>
+      </form>
+
+      <div class="mt-5 flex items-center justify-between gap-3 rounded-2xl border border-dashed border-utem-purple/30 bg-gradient-card p-4">
+        <div>
+          <p class="text-sm font-bold uppercase tracking-wide text-utem-purple">Nuevo titulado</p>
+          <p class="mt-1 text-sm text-utem-dark/70">Abre el panel para agregar una nueva tarjeta al muro.</p>
+        </div>
+        <button id="toggle-create-alumni" type="button" class="rounded-full border border-utem-purple/30 px-5 py-3 text-sm font-bold text-utem-purple hover:bg-utem-purple/5">
+          Agregar
+        </button>
+      </div>
+
+      <div id="alumni-create-panel" class="hidden mt-5 rounded-2xl border border-utem-gray/40 bg-gradient-card p-4">
+        <form id="alumni-create-form" class="grid gap-4">
+          <input type="hidden" name="image_url" value="" />
+          <label class="space-y-1">
+            <span class="text-sm font-semibold text-utem-dark">Perfil de LinkedIn</span>
+            <div class="flex gap-2">
+              <input name="linkedin_url" type="url" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="https://www.linkedin.com/in/..." />
+              <button id="preview-linkedin-create" type="button" class="rounded-xl border border-utem-purple/40 px-4 py-3 text-sm font-bold text-utem-purple hover:bg-utem-purple/5">
+                Autocompletar
+              </button>
+            </div>
+          </label>
+          <div id="create-linkedin-preview" class="hidden rounded-2xl border border-utem-gray/40 bg-white p-4">
+            <div class="grid gap-4 md:grid-cols-[124px_1fr] md:items-start">
+              <div id="create-preview-media" class="aspect-[4/5] w-full overflow-hidden rounded-2xl border border-utem-gray/40 bg-gradient-to-br from-utem-purple/10 to-white"></div>
+              <div class="space-y-2">
+                <p class="text-sm font-bold uppercase tracking-wide text-utem-purple">Vista previa</p>
+                <h3 id="create-preview-name" class="text-xl font-bold text-utem-dark">Perfil de LinkedIn</h3>
+                <p id="create-preview-summary" class="text-sm leading-relaxed text-utem-dark/75"></p>
+              </div>
+            </div>
+          </div>
+          <div class="grid gap-4 md:grid-cols-2">
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Nombre</span>
+              <input name="full_name" type="text" required class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" />
+            </label>
+            <label class="space-y-1">
+              <span class="text-sm font-semibold text-utem-dark">Ano de titulacion</span>
+              <input name="graduation_year" type="number" required class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="2025" />
+            </label>
+          </div>
+          <label class="space-y-1">
+            <span class="text-sm font-semibold text-utem-dark">Resumen</span>
+            <textarea name="summary" rows="4" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none"></textarea>
+          </label>
+          <label class="space-y-1">
+            <span class="text-sm font-semibold text-utem-dark">Imagen asociada</span>
+            <input name="image" type="file" accept="image/*" class="w-full rounded-xl border border-utem-gray/60 px-4 py-3 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-utem-blue/10 file:px-3 file:py-1 file:text-utem-blue" />
+          </label>
+          <button type="submit" class="rounded-full bg-gradient-utem px-5 py-3 text-sm font-bold text-white transition-all hover:shadow-glowBlue">
+            Agregar al muro
+          </button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <div id="wall-modal" class="hidden fixed inset-0 z-[70]">
+    <div data-action="close-modal" class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm"></div>
+    <div class="relative flex min-h-full items-center justify-center p-4 md:p-8">
+      <div class="relative max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-3xl border border-white/20 bg-white shadow-2xl">
+        <button
+          id="wall-modal-close"
+          type="button"
+          class="absolute right-4 top-4 z-10 rounded-full border border-utem-gray/40 bg-white/95 px-4 py-2 text-sm font-bold text-utem-dark hover:border-utem-purple hover:text-utem-purple"
+        >
+          Cerrar
+        </button>
+        <div id="wall-modal-body" class="max-h-[92vh] overflow-y-auto p-5 md:p-8"></div>
+      </div>
+    </div>
+  </div>
+</MainLayout>
+
+<script is:inline define:vars={{ apiBase }}>
+  window.CE_API_BASE = apiBase;
+</script>
+
+<script type="module">
+  import {
+    escapeHtml,
+    initialsFor,
+    isAdminSession,
+    requestJson,
+    resolveAssetUrl,
+  } from '/admin-client.js';
+
+  const apiBase = window.CE_API_BASE || '/api';
+  const introEl = document.getElementById('wall-intro');
+  const contentEl = document.getElementById('wall-content');
+  const adminShellEl = document.getElementById('wall-admin-shell');
+  const introFormEl = document.getElementById('wall-intro-form');
+  const introInputEl = document.getElementById('wall-intro-input');
+  const toggleCreateBtn = document.getElementById('toggle-create-alumni');
+  const createPanelEl = document.getElementById('alumni-create-panel');
+  const createFormEl = document.getElementById('alumni-create-form');
+  const createPreviewEl = document.getElementById('create-linkedin-preview');
+  const createPreviewMediaEl = document.getElementById('create-preview-media');
+  const createPreviewNameEl = document.getElementById('create-preview-name');
+  const createPreviewSummaryEl = document.getElementById('create-preview-summary');
+  const previewBtn = document.getElementById('preview-linkedin-create');
+  const modalEl = document.getElementById('wall-modal');
+  const modalBodyEl = document.getElementById('wall-modal-body');
+  const modalCloseBtn = document.getElementById('wall-modal-close');
+
+  if (
+    !introEl ||
+    !contentEl ||
+    !adminShellEl ||
+    !introFormEl ||
+    !introInputEl ||
+    !toggleCreateBtn ||
+    !createPanelEl ||
+    !createFormEl ||
+    !createPreviewEl ||
+    !createPreviewMediaEl ||
+    !createPreviewNameEl ||
+    !createPreviewSummaryEl ||
+    !previewBtn ||
+    !modalEl ||
+    !modalBodyEl ||
+    !modalCloseBtn
+  ) {
+    throw new Error('No se encontraron los contenedores del muro.');
+  }
+
+  let adminMode = false;
+  let wallData = { intro: '', items: [] };
+  let selectedCardId = '';
+
+  const imageCard = (imageUrl, name, mode = 'card') => {
+    const imageClass = mode === 'modal'
+      ? 'h-full w-full object-contain bg-slate-100'
+      : 'h-full w-full object-cover object-top';
+    if (imageUrl) {
+      return `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name || 'Titulado')}" class="${imageClass}" loading="lazy" />`;
+    }
+    return `<div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-utem-purple/10 to-white text-4xl font-bold text-utem-purple">${escapeHtml(initialsFor(name))}</div>`;
+  };
+
+  const renderPublicCard = (person) => {
+    const imageUrl = resolveAssetUrl(person.image_url || '', apiBase);
+    const selectedClass = adminMode && selectedCardId === person.id ? 'border-utem-purple shadow-glow' : 'border-utem-gray/50 shadow-subtle';
+    return `
+      <button
+        type="button"
+        data-action="open-card"
+        data-alumni-id="${escapeHtml(person.id)}"
+        class="group overflow-hidden rounded-2xl border ${selectedClass} bg-white text-left transition-all duration-300 hover:-translate-y-1 hover:border-utem-purple/60 hover:shadow-glow"
+      >
+        <div class="aspect-[4/5] w-full overflow-hidden bg-slate-100">
+          ${imageCard(imageUrl, person.full_name || 'Titulado')}
+        </div>
+        <div class="space-y-3 p-4">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h3 class="text-lg font-bold leading-snug text-utem-dark">${escapeHtml(person.full_name || 'Titulado')}</h3>
+              <p class="text-sm font-medium text-utem-dark/55">Titulado ICCD</p>
+            </div>
+            <span class="rounded-full bg-utem-purple/10 px-3 py-1 text-sm font-semibold text-utem-purple">${escapeHtml(person.graduation_year || '')}</span>
+          </div>
+          <p class="text-sm font-semibold text-utem-purple group-hover:text-utem-blue">Abrir ficha</p>
+        </div>
+      </button>
+    `;
+  };
+
+  const renderModal = () => {
+    const item = (wallData.items || []).find((entry) => entry.id === selectedCardId);
+    if (!item) {
+      modalBodyEl.innerHTML = '';
+      modalEl.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+      return;
+    }
+
+    const imageUrl = resolveAssetUrl(item.image_url || '', apiBase);
+    if (adminMode) {
+      modalBodyEl.innerHTML = `
+        <form id="wall-editor-form" data-alumni-id="${escapeHtml(item.id)}" class="grid gap-6 lg:grid-cols-[320px_1fr]">
+          <div class="space-y-4">
+            <div class="overflow-hidden rounded-3xl border border-utem-gray/40 bg-gradient-card">
+              <div class="aspect-[4/5] w-full">
+                ${imageCard(imageUrl, item.full_name || 'Titulado', 'modal')}
+              </div>
+            </div>
+            ${item.linkedin_url ? `<a href="${escapeHtml(item.linkedin_url)}" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-full bg-gradient-utem px-4 py-2 text-sm font-bold text-white">Ver perfil de LinkedIn</a>` : ''}
+          </div>
+          <div class="grid gap-4">
+            <div>
+              <p class="text-sm font-bold uppercase tracking-wider text-utem-purple">Edicion</p>
+              <h2 class="mt-2 text-3xl font-bold text-utem-dark">${escapeHtml(item.full_name || 'Titulado')}</h2>
+            </div>
+            <input data-field="image_url" type="hidden" value="${escapeHtml(item.image_url || '')}" />
+            <div class="grid gap-4 md:grid-cols-2">
+              <input data-field="full_name" type="text" value="${escapeHtml(item.full_name || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Nombre" />
+              <input data-field="graduation_year" type="number" value="${escapeHtml(item.graduation_year || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Ano" />
+            </div>
+            <input data-field="linkedin_url" type="url" value="${escapeHtml(item.linkedin_url || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="LinkedIn" />
+            <textarea data-field="summary" rows="8" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Resumen">${escapeHtml(item.summary || '')}</textarea>
+            <input data-field="image" type="file" accept="image/*" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-utem-blue/10 file:px-3 file:py-1 file:text-utem-blue" />
+            <div class="flex flex-wrap gap-2">
+              <button type="submit" class="rounded-full bg-gradient-utem px-4 py-2 text-sm font-bold text-white">Guardar</button>
+              <button data-action="delete-alumni" type="button" class="rounded-full border border-red-300 px-4 py-2 text-sm font-bold text-red-600">Eliminar</button>
+            </div>
+          </div>
+        </form>
+      `;
+    } else {
+      modalBodyEl.innerHTML = `
+        <article class="grid gap-6 lg:grid-cols-[320px_1fr]">
+          <div class="overflow-hidden rounded-3xl border border-utem-gray/40 bg-gradient-card">
+            <div class="aspect-[4/5] w-full">
+              ${imageCard(imageUrl, item.full_name || 'Titulado', 'modal')}
+            </div>
+          </div>
+          <div class="space-y-5">
+            <div class="space-y-3">
+              <span class="inline-flex rounded-full bg-utem-purple/10 px-4 py-1 text-sm font-semibold text-utem-purple">${escapeHtml(item.graduation_year || '')}</span>
+              <h2 class="text-3xl font-bold text-utem-dark">${escapeHtml(item.full_name || 'Titulado')}</h2>
+              <p class="text-sm font-semibold uppercase tracking-wider text-utem-dark/50">Titulado ICCD</p>
+            </div>
+            <p class="text-base leading-relaxed text-utem-dark/75">${escapeHtml(item.summary || 'Sin descripcion adicional por ahora.')}</p>
+            ${item.linkedin_url ? `<a href="${escapeHtml(item.linkedin_url)}" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-full bg-gradient-utem px-4 py-2 text-sm font-bold text-white">Ver perfil de LinkedIn</a>` : ''}
+          </div>
+        </article>
+      `;
+    }
+
+    modalEl.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+  };
+
+  const closeModal = () => {
+    modalEl.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+  };
+
+  const renderWall = (items) => {
+    if (!Array.isArray(items) || items.length === 0) {
+      contentEl.innerHTML = '<p class="text-sm text-utem-dark/70">Aun no hay titulados publicados en el muro.</p>';
+      return;
+    }
+
+    const groups = items.reduce((acc, item) => {
+      const year = item.graduation_year || 'Sin ano';
+      if (!acc[year]) acc[year] = [];
+      acc[year].push(item);
+      return acc;
+    }, {});
+
+    const years = Object.keys(groups).sort((a, b) => Number(b) - Number(a));
+    contentEl.innerHTML = years
+      .map((year) => {
+        const cards = groups[year].map(renderPublicCard).join('');
+        return `
+          <section class="space-y-5">
+            <div class="flex items-center gap-3">
+              <div class="h-1.5 w-10 rounded-full bg-gradient-to-r from-utem-purple to-utem-blue"></div>
+              <h2 class="text-2xl font-bold text-utem-dark">Titulacion ${escapeHtml(year)}</h2>
+            </div>
+            <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">${cards}</div>
+          </section>
+        `;
+      })
+      .join('');
+  };
+
+  const setCreatePreview = (payload) => {
+    const setValue = (name, value) => {
+      const field = createFormEl.elements.namedItem(name);
+      if (field && !field.value) field.value = value || '';
+    };
+
+    setValue('full_name', payload.full_name || '');
+    setValue('summary', payload.summary || '');
+    const imageField = createFormEl.elements.namedItem('image_url');
+    if (imageField) imageField.value = payload.image_url || '';
+
+    const imageUrl = resolveAssetUrl(payload.image_url || '', apiBase);
+    createPreviewMediaEl.innerHTML = imageCard(imageUrl, payload.full_name || 'Titulado', 'card');
+    createPreviewNameEl.textContent = payload.full_name || 'Perfil de LinkedIn';
+    createPreviewSummaryEl.textContent = payload.summary || 'Se usara la foto publica del perfil y el nombre asociado.';
+    createPreviewEl.classList.remove('hidden');
+  };
+
+  const setCreatePanelState = (open) => {
+    createPanelEl.classList.toggle('hidden', !open);
+    toggleCreateBtn.textContent = open ? 'Cerrar' : 'Agregar';
+    if (!open) {
+      createPreviewEl.classList.add('hidden');
+      createPreviewMediaEl.innerHTML = '';
+      createPreviewNameEl.textContent = 'Perfil de LinkedIn';
+      createPreviewSummaryEl.textContent = '';
+    }
+  };
+
+  const loadWall = async () => {
+    try {
+      const response = await fetch(`${apiBase}/content/alumni-wall`);
+      if (!response.ok) throw new Error('No se pudo cargar el muro');
+      const data = await response.json();
+      wallData = data;
+
+      const items = Array.isArray(data.items) ? data.items : [];
+      if (selectedCardId && !items.some((item) => item.id === selectedCardId)) {
+        selectedCardId = '';
+        closeModal();
+      }
+
+      introEl.textContent =
+        data.intro ||
+        'Este es un muro conmemorativo para recordar a nuestros companeros titulados, como tambien estar conectados a traves de LinkedIn para una Red de Ciencia de Datos.';
+      introInputEl.value = introEl.textContent;
+      renderWall(items);
+      if (!modalEl.classList.contains('hidden') && selectedCardId) {
+        renderModal();
+      }
+    } catch (error) {
+      introEl.textContent =
+        'No fue posible cargar el muro del recuerdo desde el servidor en este momento.';
+      contentEl.innerHTML = '<p class="text-sm text-red-600">Intenta nuevamente mas tarde.</p>';
+    }
+  };
+
+  const previewLinkedinProfile = async () => {
+    const linkedinField = createFormEl.elements.namedItem('linkedin_url');
+    const linkedinUrl = linkedinField ? linkedinField.value.trim() : '';
+    if (!linkedinUrl) {
+      window.alert('Ingresa primero un enlace de LinkedIn.');
+      return;
+    }
+
+    const payload = await requestJson('/admin/alumni/preview-linkedin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: linkedinUrl }),
+    }, apiBase);
+    setCreatePreview(payload.item || {});
+  };
+
+  introFormEl.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!adminMode) return;
+
+    try {
+      await requestJson('/admin/alumni/intro', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ intro: introInputEl.value.trim() }),
+      }, apiBase);
+      await loadWall();
+    } catch (error) {
+      window.alert(error.message || 'No fue posible actualizar el texto.');
+    }
+  });
+
+  previewBtn.addEventListener('click', async () => {
+    if (!adminMode) return;
+    try {
+      await previewLinkedinProfile();
+    } catch (error) {
+      window.alert(error.message || 'No fue posible autocompletar desde LinkedIn.');
+    }
+  });
+
+  createFormEl.elements.namedItem('linkedin_url')?.addEventListener('blur', async () => {
+    if (!adminMode) return;
+    const linkedinUrl = createFormEl.elements.namedItem('linkedin_url')?.value?.trim();
+    if (!linkedinUrl) return;
+    try {
+      await previewLinkedinProfile();
+    } catch (error) {
+      console.warn(error);
+    }
+  });
+
+  toggleCreateBtn.addEventListener('click', () => {
+    setCreatePanelState(createPanelEl.classList.contains('hidden'));
+  });
+
+  createFormEl.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!adminMode) return;
+
+    try {
+      const payload = await requestJson('/admin/alumni', {
+        method: 'POST',
+        body: new FormData(createFormEl),
+      }, apiBase);
+      selectedCardId = payload.item?.id || '';
+      createFormEl.reset();
+      setCreatePanelState(false);
+      await loadWall();
+      renderModal();
+    } catch (error) {
+      window.alert(error.message || 'No fue posible agregar la tarjeta.');
+    }
+  });
+
+  contentEl.addEventListener('click', (event) => {
+    const cardButton = event.target.closest('button[data-action="open-card"]');
+    if (!cardButton) return;
+
+    selectedCardId = cardButton.dataset.alumniId || '';
+    renderModal();
+  });
+
+  modalEl.addEventListener('click', (event) => {
+    const closeTrigger = event.target.closest('[data-action="close-modal"]');
+    if (closeTrigger) {
+      closeModal();
+    }
+  });
+
+  modalCloseBtn.addEventListener('click', closeModal);
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !modalEl.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
+
+  modalBodyEl.addEventListener('submit', async (event) => {
+    const form = event.target.closest('#wall-editor-form');
+    if (!form) return;
+    event.preventDefault();
+
+    const alumniId = form.dataset.alumniId || '';
+    const formData = new FormData();
+    ['full_name', 'summary', 'graduation_year', 'linkedin_url', 'image_url'].forEach((field) => {
+      formData.append(field, form.querySelector(`[data-field="${field}"]`)?.value || '');
+    });
+    const imageInput = form.querySelector('[data-field="image"]');
+    if (imageInput?.files?.[0]) {
+      formData.append('image', imageInput.files[0]);
+    }
+
+    try {
+      await requestJson(`/admin/alumni/${alumniId}`, {
+        method: 'PUT',
+        body: formData,
+      }, apiBase);
+      selectedCardId = alumniId;
+      await loadWall();
+    } catch (error) {
+      window.alert(error.message || 'No fue posible actualizar la tarjeta.');
+    }
+  });
+
+  modalBodyEl.addEventListener('click', async (event) => {
+    const deleteButton = event.target.closest('button[data-action="delete-alumni"]');
+    if (!deleteButton) return;
+
+    const form = deleteButton.closest('#wall-editor-form');
+    if (!form) return;
+    const alumniId = form.dataset.alumniId || '';
+
+    if (!window.confirm('Se eliminara esta tarjeta del muro. Deseas continuar?')) return;
+
+    try {
+      await requestJson(`/admin/alumni/${alumniId}`, { method: 'DELETE' }, apiBase);
+      if (selectedCardId === alumniId) {
+        selectedCardId = '';
+      }
+      closeModal();
+      await loadWall();
+    } catch (error) {
+      window.alert(error.message || 'No fue posible eliminar la tarjeta.');
+    }
+  });
+
+  adminMode = await isAdminSession(apiBase);
+  adminShellEl.classList.toggle('hidden', !adminMode);
+  setCreatePanelState(false);
+  await loadWall();
+</script>

@@ -1,0 +1,140 @@
+---
+// PARTE INFERIOR DE LA PÁGINA
+const currentYear = new Date().getFullYear();
+---
+
+<footer id="contact" class="mt-16 border-t-4 border-utem-green bg-utem-blue text-white">
+  
+  <div class="mx-auto max-w-6xl px-6 pt-12 pb-8">
+    
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-3 mb-10">
+      
+      <div class="space-y-4">
+        <div class="flex items-center gap-3">
+          
+          <div class="h-16 w-16 rounded grid place-items-center">
+            <img 
+              src="/Imgs/logo_blanco.png" 
+              alt="Logo UTEM" 
+              class="w-full h-full object-contain" 
+            />
+          </div>
+
+          <div class="leading-tight">
+            <p class="font-display font-bold text-lg">ICCD · UTEM</p>
+            <p class="text-xs text-blue-100 font-light">Ingeniería Civil en Ciencia de Datos</p>
+          </div>
+        </div>
+        <p class="text-sm text-blue-100/80 leading-relaxed max-w-xs">
+          Formando profesionales líderes en la transformación digital y el análisis de datos.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm border-b border-utem-green inline-block pb-1">
+          Navegación
+        </h3>
+        <ul class="space-y-2 text-sm text-blue-100">
+          <li><a href="/" class="hover:text-white hover:underline decoration-utem-green decoration-2 underline-offset-4 transition-all">Inicio</a></li>
+          <li><a href="/proyectos/" class="hover:text-white hover:underline decoration-utem-green decoration-2 underline-offset-4 transition-all">Proyectos Destacados</a></li>
+          <li><a href="/integrantes/" class="hover:text-white hover:underline decoration-utem-green decoration-2 underline-offset-4 transition-all">Equipo CE</a></li>
+          <li><a href="/muro-recuerdo/" class="hover:text-white hover:underline decoration-utem-green decoration-2 underline-offset-4 transition-all">Muro del Recuerdo</a></li>
+          <li><a href="/jefe/" class="hover:text-white hover:underline decoration-utem-green decoration-2 underline-offset-4 transition-all">Jefatura de Carrera</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm border-b border-utem-green inline-block pb-1">
+          Contacto
+        </h3>
+        <ul class="space-y-4 text-sm text-blue-100">
+          <li class="flex items-start gap-3">
+            <span class="text-utem-green mt-0.5">📍</span>
+            <span>Campus Macul, Av. José Pedro Alessandri 1242, Ñuñoa.</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="text-utem-green">✉️</span>
+            <a href="mailto:ce.iccd@utem.cl" class="hover:text-white transition-colors">ce.iccd@utem.cl</a>
+          </li>
+          
+          <li class="pt-2 flex items-center gap-4">
+            <a 
+              href="https://www.instagram.com/ceedatos/" 
+              target="_blank" 
+              class="transition-transform hover:scale-110"
+              aria-label="Instagram CE Datos"
+            >
+              <img 
+                src="/Imgs/instagram.png" 
+                alt="Instagram" 
+                class="w-10 h-10 rounded-full object-cover shadow-md" 
+              />
+            </a>
+            <a 
+              href="https://www.utem.cl" 
+              target="_blank" 
+              class="transition-transform hover:scale-110"
+              aria-label="Sitio Web UTEM"
+            >
+              <img 
+                src="/Imgs/utem_circular.png" 
+                alt="Web UTEM" 
+                class="w-10 h-10 rounded-full object-cover shadow-md" 
+              />
+            </a>
+          </li>
+           </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-blue-200/60">
+          
+          <p>&copy; {currentYear} Centro de Estudiantes ICCD.</p>
+
+          <p class="text-center">
+                  Desarrollado por 
+                  
+                  <a 
+                    href="https://www.linkedin.com/in/aranza-d%C3%ADaz-tobar-07595a2a5/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="text-white font-medium hover:text-utem-green hover:underline transition-colors"
+                  >
+                    Aranza Díaz Tobar
+                  </a>, 
+
+                  <a 
+                    href="https://www.linkedin.com/in/constanza-olivos-fern%C3%A1ndez/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="text-white font-medium hover:text-utem-green hover:underline transition-colors"
+                  >
+                    Constanza Olivos Fernández
+                  </a>,
+
+                  <span class="text-white font-medium">
+                    Andres Vega Moraga
+                  </span>,
+
+                  <span class="text-white font-medium">
+                    Juan Toledo Fierro
+                  </span>
+
+                  & 
+                  
+                  <a 
+                    href="https://www.linkedin.com/in/brunosainzsilva/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="text-white font-medium hover:text-utem-green hover:underline transition-colors"
+                  >
+                    Bruno Sainz Silva
+                  </a>
+                </p>
+
+          <p class="hidden md:block">Universidad Tecnológica Metropolitana</p>
+        
+        </div>
+
+      </div>
+</footer>

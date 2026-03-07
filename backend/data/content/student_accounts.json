@@ -1,0 +1,11 @@
+{
+  "items": [
+    {
+      "id": "avega-utem-cl",
+      "name": "Andres Vega Moraga",
+      "email": "avega@utem.cl",
+      "password_hash": "260000$2ZRdPDhWIRz1ZvhaDO5n+w==$9nvQU1x4n2RKyZO8U/oagECBO/UGYPV/x4Vt9ZhePF8=",
+      "created_at": "2026-03-07T02:44:15.864594+00:00"
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+---
+import pythonFile from '../assets/python/testo.py?raw';
+---
+
+<section id="python" class="py-12 space-y-8 animate-fade-in">
+  <div class="flex flex-col gap-4">
+    <span class="inline-flex items-center gap-2">
+      <div class="h-1 w-8 rounded-full bg-gradient-to-r from-utem-blue to-utem-purple"></div>
+      <p class="text-sm font-bold uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-utem-blue to-utem-purple">Proyectos Python</p>
+    </span>
+    <h2 class="text-3xl md:text-4xl font-bold text-utem-dark">Innovación aplicada: chatbots, visión y ciencia de datos</h2>
+    <p class="max-w-3xl text-utem-dark/80 text-lg leading-relaxed">
+      Selección de proyectos universitarios desarrollados por estudiantes ICCD para mostrar el potencial de la carrera:
+      IA conversacional, visión por computador y analítica avanzada. El antiguo prototipo en Streamlit queda solo como
+      referencia descargable.
+    </p>
+  </div>
+
+  <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+    <!-- Tarjeta principal -->
+    <div class="group rounded-2xl border border-utem-gray/50 bg-gradient-card p-8 space-y-6 shadow-subtle hover:shadow-glow hover:border-utem-blue/30 transition-all duration-300">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-lg bg-gradient-to-br from-utem-blue to-utem-purple flex items-center justify-center">
+          <span class="text-white font-bold">Py</span>
+        </div>
+        <p class="text-lg font-bold text-utem-blue">Proyectos destacados</p>
+      </div>
+      <ul class="space-y-4 text-utem-dark/80">
+        <li class="flex items-start gap-3">
+          <div class="h-2 w-2 rounded-full bg-utem-blue mt-2 flex-shrink-0"></div>
+          <span><strong class="text-utem-dark">Chatbot académico:</strong> FAQ de la carrera con intents entrenados en materiales UTEM.</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <div class="h-2 w-2 rounded-full bg-utem-purple mt-2 flex-shrink-0"></div>
+          <span><strong class="text-utem-dark">Reconocimiento facial:</strong> prototipo de control de acceso para laboratorios y eventos.</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <div class="h-2 w-2 rounded-full bg-utem-blue mt-2 flex-shrink-0"></div>
+          <span><strong class="text-utem-dark">Visualización 3D:</strong> superficies y gráficos interactivos para divulgación técnica.</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <div class="h-2 w-2 rounded-full bg-utem-purple mt-2 flex-shrink-0"></div>
+          <span><strong class="text-utem-dark">Dashboard de avisos y recursos:</strong> agenda, links a Drive y contactos oficiales.</span>
+        </li>
+      </ul>
+      <div class="flex flex-wrap gap-4 pt-6">
+        <a
+          href="/downloads/python-code.zip"
+          class="group relative rounded-full bg-gradient-to-r from-utem-blue to-utem-purple px-6 py-3 text-sm font-bold text-white transition-all duration-300 hover:shadow-glow hover:scale-105 active:scale-95"
+          download
+        >
+          <span class="relative z-10">Descargar código heredado</span>
+          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-utem-purple to-utem-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </a>
+        <a
+          href="/python-info"
+          class="group rounded-full border-2 border-utem-gray px-6 py-3 text-sm font-bold text-utem-dark hover:border-utem-blue hover:text-utem-blue hover:shadow-md transition-all duration-300"
+        >
+          Ver documentación
+          <span class="ml-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Tarjetas laterales -->
+    <div class="space-y-6">
+      <div class="group rounded-xl border border-utem-gray/50 bg-white p-6 shadow-subtle hover:shadow-md hover:border-utem-blue/30 transition-all duration-300">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="h-2 w-2 rounded-full bg-utem-blue"></div>
+          <p class="text-sm font-bold text-utem-blue">Propósito</p>
+        </div>
+        <p class="text-sm text-utem-dark/80 leading-relaxed">
+          Mostrar proyectos concretos que impulsan la carrera: IA, visión y ciencia de datos aplicados a la comunidad.
+        </p>
+      </div>
+      
+      <div class="group rounded-xl border border-utem-gray/50 bg-white p-6 shadow-subtle hover:shadow-md hover:border-utem-purple/30 transition-all duration-300">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="h-2 w-2 rounded-full bg-utem-purple"></div>
+          <p class="text-sm font-bold text-utem-purple">Stack sugerido</p>
+        </div>
+        <ul class="text-sm text-utem-dark/80 space-y-2">
+          <li class="flex items-center gap-2">
+            <div class="h-1.5 w-1.5 rounded-full bg-utem-blue/70"></div>
+            <span>Chatbots: Python, FastAPI, Rasa u OpenAI API.</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <div class="h-1.5 w-1.5 rounded-full bg-utem-purple/70"></div>
+            <span>Visión: OpenCV, MediaPipe, modelos preentrenados.</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <div class="h-1.5 w-1.5 rounded-full bg-utem-blue/70"></div>
+            <span>Gráficos: Plotly, Matplotlib, NumPy.</span>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="group rounded-xl border border-utem-gray/50 bg-white p-6 shadow-subtle hover:shadow-md hover:border-utem-teal/30 transition-all duration-300">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="h-2 w-2 rounded-full bg-utem-teal"></div>
+          <p class="text-sm font-bold text-utem-teal">Casos de uso</p>
+        </div>
+        <ul class="text-sm text-utem-dark/80 space-y-2">
+          <li class="flex items-center gap-2">
+            <div class="h-1.5 w-1.5 rounded-full bg-utem-teal/70"></div>
+            <span>Orientación a estudiantes y postulantes.</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <div class="h-1.5 w-1.5 rounded-full bg-utem-teal/70"></div>
+            <span>Demostraciones para clases y ferias tecnológicas.</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <div class="h-1.5 w-1.5 rounded-full bg-utem-teal/70"></div>
+            <span>Prototipos de control de acceso y eventos.</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <div class="h-1.5 w-1.5 rounded-full bg-utem-teal/70"></div>
+            <span>Divulgación técnica de la carrera ICCD.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+</section>
+
+<style>
+  .bg-gradient-card {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #F0F9FF 100%);
+  }
+</style>

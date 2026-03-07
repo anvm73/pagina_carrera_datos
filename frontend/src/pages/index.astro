@@ -1,0 +1,184 @@
+---
+// PÁGINA PRINCIPAL
+import MainLayout from '../layouts/MainLayout.astro';
+import Hero from '../components/Hero.astro';
+import '../styles/global.css';
+---
+
+<MainLayout>
+  <div class="space-y-16 pb-12">
+    
+    <Hero
+      title="Ingeniería Civil en Ciencia de Datos"
+      highlight="UTEM · Centro de Estudiantes ICCD"
+      subtitle="Bienvenido al portal oficial: proyectos, equipo, jefe de carrera y contacto en páginas separadas."
+      ctaPrimary={{ label: 'Ver Proyectos', href: '/proyectos' }}
+      ctaSecondary={{ label: 'Ir a contacto', href: '/contacto' }}
+      badge="Bienvenida"
+      imageSrc=""
+      imageAlt="ICCD UTEM"
+    />
+
+
+<div class="max-w-6xl mx-auto px-6 !mt-4">
+      <img 
+        src="/Imgs/fondo.png" 
+        alt="Fondo representativo ICCD UTEM" 
+        class="w-full h-auto object-cover rounded-3xl shadow-md border border-utem-gray/30"
+      />
+    </div>
+   
+
+
+    <section class="max-w-6xl mx-auto px-6">
+      <h3 class="text-xl font-bold text-utem-blue mb-6 border-l-4 border-utem-green pl-3">Información General</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="p-5 border border-utem-gray rounded-lg shadow-sm bg-white hover:border-utem-blue transition">
+          <p class="text-xs uppercase font-bold text-utem-dark/60 tracking-wider">Título Profesional</p>
+          <p class="font-semibold text-utem-blue text-sm mt-1">Ingeniera/o Civil en Ciencia de Datos</p>
+        </div>
+
+        <div class="p-5 border border-utem-gray rounded-lg shadow-sm bg-white hover:border-utem-green transition">
+          <p class="text-xs uppercase font-bold text-utem-dark/60 tracking-wider">Grado Académico</p>
+          <p class="font-semibold text-utem-green text-sm mt-1">Licenciada/o en Ciencias de la Ingeniería</p>
+        </div>
+
+        <div class="p-5 border border-utem-gray rounded-lg shadow-sm bg-white">
+          <p class="text-xs uppercase font-bold text-utem-dark/60 tracking-wider">Duración</p>
+          <p class="font-semibold text-utem-dark mt-1">11 Semestres</p>
+          <p class="text-sm text-utem-dark/70">Horario Diurno</p>
+        </div>
+
+        <div class="p-5 border border-utem-gray rounded-lg shadow-sm bg-white">
+          <p class="text-xs uppercase font-bold text-utem-dark/60 tracking-wider">Código DEMRE</p>
+          <p class="font-bold text-2xl text-utem-blackish mt-1">21049</p>
+        </div>
+
+      </div>
+
+      <div class="mt-6 bg-green-50 border border-green-200 rounded-lg p-6 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+        <div>
+          <h3 class="text-lg font-bold text-green-800 flex items-center justify-center md:justify-start gap-2">
+            Carrera Certificada por 5 años
+          </h3>
+          <p class="text-sm text-green-700 mt-1 font-medium">Desde: 26 de mayo 2025 — Hasta: 26 de marzo 2030</p>
+          <p class="text-xs text-green-600 mt-1">Agencia Acreditadora de Chile y CONAIC</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.5fr_1fr] gap-12 items-start">
+      
+      <div class="space-y-4">
+        <h2 class="text-2xl font-bold text-utem-blue">Perfil de Egreso</h2>
+        <div class="prose text-utem-dark/80 text-justify text-sm leading-relaxed space-y-4 border-l-4 border-utem-blue pl-4">
+          <p>
+            La persona egresada de Ingeniería Civil en Computación, mención Informática (base de Ciencia de Datos), de la Universidad Tecnológica Metropolitana, posee una formación integral que combina sólidos fundamentos en ciencias de la ingeniería, la computación y la gestión tecnológica.
+          </p>
+          <p>
+            Durante su proceso formativo desarrolla una mirada estratégica frente a los desafíos digitales contemporáneos, con la capacidad de integrar creatividad, innovación y responsabilidad social en el diseño de soluciones tecnológicas que transformen la sociedad.
+          </p>
+          <p>
+            A lo largo de la carrera, se fomenta el pensamiento crítico, la adaptabilidad y el liderazgo colaborativo, preparando a cada estudiante para desenvolverse en entornos cambiantes y multidisciplinarios. Además, la formación enfatiza valores éticos y una visión sostenible de la tecnología.
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-white p-8 rounded-2xl border-2 border-utem-blue shadow-xl text-center sticky top-24">
+        
+        <div class="w-40 h-40 bg-blue-50 text-utem-blue rounded-full flex items-center justify-center mx-auto mb-6 overflow-hidden border border-blue-100">
+          <img 
+            src="/Imgs/Logo1.png" 
+            alt="Logo UTEM" 
+            class="w-full h-full object-contain p-2" 
+          />
+        </div>
+
+        <h3 class="text-xl font-bold text-utem-dark">Malla Curricular</h3>
+        <p class="text-sm text-utem-dark/60 mt-2 mb-6">
+          Revisa el detalle de asignaturas por semestre.
+        </p>
+        
+        <a 
+          href="/malla.pdf" 
+          download="Malla_ICCD_UTEM.pdf"
+          class="flex items-center justify-center gap-2 w-full py-3 px-4 bg-utem-blue hover:bg-utem-blueDark text-white rounded-lg font-semibold transition transform hover:-translate-y-1 shadow-md"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          Descargar Malla PDF
+        </a>
+      </div>
+
+    </section>
+
+<section class="max-w-6xl mx-auto px-6">
+      <div class="mb-5 flex items-center gap-2 border-b border-utem-gray/30 pb-3">
+  
+        <h3 class="text-lg font-bold text-utem-blue uppercase tracking-wide">Accesos Directos</h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <a href="/proyectos" class="group flex flex-col p-5 bg-white border border-utem-gray rounded-xl shadow-sm hover:shadow-md hover:border-utem-blue transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-white border border-utem-gray/50 text-utem-blue flex items-center justify-center text-2xl mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:border-utem-blue">
+            <img 
+              src="/Imgs/proyecto.png" 
+              alt="Proyectos" 
+              class="w-full h-full object-contain p-2" 
+            />
+          </div>
+          <span class="font-bold text-utem-dark group-hover:text-utem-blue transition-colors">Proyectos</span>
+          <span class="text-xs text-utem-dark/60 mt-1">Chatbots, visión y analítica</span>
+        </a>
+
+        <a href="/integrantes" class="group flex flex-col p-5 bg-white border border-utem-gray rounded-xl shadow-sm hover:shadow-md hover:border-utem-green transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-white border border-utem-gray/50 text-utem-green flex items-center justify-center text-2xl mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:border-utem-green">
+            <img 
+              src="/Imgs/integrantes.png" 
+              alt="Integrantes centro" 
+              class="w-full h-full object-contain p-2" 
+            />
+          </div>
+          <span class="font-bold text-utem-dark group-hover:text-utem-green transition-colors">Integrantes CE</span>
+          <span class="text-xs text-utem-dark/60 mt-1">Conoce al equipo</span>
+        </a>
+
+        <a href="/jefe" class="group flex flex-col p-5 bg-white border border-utem-gray rounded-xl shadow-sm hover:shadow-md hover:border-utem-blue transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-white border border-utem-gray/50 text-utem-blue flex items-center justify-center text-2xl mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:border-utem-blue">
+            <img 
+              src="/Imgs/jefe.png" 
+              alt="Jefe de carrera" 
+              class="w-full h-full object-contain p-2" 
+            />
+          </div>
+          <span class="font-bold text-utem-dark group-hover:text-utem-blue transition-colors">Jefe de Carrera</span>
+          <span class="text-xs text-utem-dark/60 mt-1">Información académica</span>
+        </a>
+
+        <a href="/muro-recuerdo" class="group flex flex-col p-5 bg-white border border-utem-gray rounded-xl shadow-sm hover:shadow-md hover:border-utem-purple transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-white border border-utem-gray/50 text-utem-purple flex items-center justify-center text-xl font-bold mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:border-utem-purple">
+            MR
+          </div>
+          <span class="font-bold text-utem-dark group-hover:text-utem-purple transition-colors">Muro del Recuerdo</span>
+          <span class="text-xs text-utem-dark/60 mt-1">Red conmemorativa de titulados</span>
+        </a>
+
+        <a href="/contacto" class="group flex flex-col p-5 bg-white border border-utem-gray rounded-xl shadow-sm hover:shadow-md hover:border-utem-green transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-white border border-utem-gray/50 text-utem-green flex items-center justify-center text-2xl mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:border-utem-green">
+            <img 
+              src="/Imgs/contacto.png" 
+              alt="Contacto" 
+              class="w-full h-full object-contain p-2" 
+            />
+          </div>
+          <span class="font-bold text-utem-dark group-hover:text-utem-green transition-colors">Contacto</span>
+          <span class="text-xs text-utem-dark/60 mt-1">Redes y ubicación</span>
+        </a>
+
+      </div>
+    </section>
+
+  </div>
+</MainLayout>

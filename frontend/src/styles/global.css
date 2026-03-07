@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply font-body bg-white text-utem-dark;
+}
+
+.section-title {
+  @apply text-3xl md:text-4xl font-display font-semibold text-utem-blue;
+}
+
+code {
+  @apply rounded-md bg-utem-gray text-utem-dark px-1.5 py-0.5 text-sm;
+}
+
+pre {
+  @apply bg-[#F7F7F7] text-utem-dark rounded-xl p-4 overflow-x-auto border border-utem-gray shadow-none;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}

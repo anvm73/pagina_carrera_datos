@@ -1,0 +1,273 @@
+---
+// LO QUE SE REPITE EN TODAS LAS PAGINAS
+// 1. IMPORTAR EL COMPONENTE FOOTER
+import Footer from '../components/Footer.astro';
+
+const title = 'Centro de Estudiantes ICCD UTEM';
+const description = 'Landing moderna del Centro de Estudiantes de Ingenieria Civil en Ciencia de Datos.';
+const { fullBleed = false, hideFooter = false } = Astro.props;
+const adminApiBase = (import.meta.env.PUBLIC_PROJECTS_API_URL || '/api').replace(/\/$/, '');
+const mainClass = fullBleed
+  ? 'flex-grow w-full px-0 py-0'
+  : 'flex-grow mx-auto w-full max-w-6xl px-6 py-8 md:py-12';
+---
+
+<!doctype html>
+<html lang="es" class="scroll-smooth" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <style>
+      :global(:root) {
+        scroll-behavior: smooth;
+      }
+      :global(::selection) {
+        background-color: rgba(138, 43, 226, 0.3);
+        color: #0F1115;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gradient-to-br from-white via-utem-skySoft/10 to-utem-aquaSoft/5 font-body text-utem-blackish min-h-screen">
+    <div class="relative min-h-screen flex flex-col">
+
+      <!-- Fondo decorativo -->
+      <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div class="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-gradient-to-r from-utem-blue/5 to-utem-purple/5 blur-3xl"></div>
+        <div class="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-gradient-to-r from-utem-purple/5 to-utem-blue/5 blur-3xl"></div>
+      </div>
+
+      <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-utem-gray/50 shadow-sm">
+        <div class="mx-auto grid w-full grid-cols-[1fr_auto] items-center gap-4 px-4 py-4 md:grid-cols-[auto_1fr_auto] md:gap-8 md:px-8 lg:px-12">
+
+          <a href="/" class="group flex items-center gap-3 font-display text-lg font-semibold text-utem-blue hover:opacity-80 transition-all duration-300 md:justify-self-start">
+            <div class="relative">
+              <img 
+                src="/Imgs/utem1.png" 
+                alt="Logo UTEM" 
+                class="h-10 w-auto object-contain transition-transform group-hover:scale-105" 
+              />
+              <div class="absolute -inset-2 bg-gradient-to-r from-utem-blue/10 to-utem-purple/10 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </div>
+            <div class="leading-tight">
+              <p class="group-hover:text-utem-purple transition-colors">Ing. Civil en Ciencia de Datos</p>
+              <p class="text-xs font-normal text-utem-dark/70 group-hover:text-utem-grayBlue transition-colors">Centro de Estudiantes</p>
+            </div>
+          </a>
+
+          <nav class="hidden md:flex items-center justify-center gap-2 rounded-full border border-utem-gray/40 bg-white/70 px-3 py-2 text-sm font-medium text-utem-dark shadow-sm">
+            <a href="/" class="relative rounded-full px-3 py-1.5 text-utem-blue hover:text-utem-purple transition-colors group">
+              Inicio
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-utem-blue to-utem-purple group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <a href="/proyectos/" class="relative rounded-full px-3 py-1.5 text-utem-dark hover:text-utem-blue transition-colors group">
+              Proyectos
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-utem-blue to-utem-purple group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <a href="/integrantes/" class="relative rounded-full px-3 py-1.5 text-utem-dark hover:text-utem-blue transition-colors group">
+              Integrantes CE
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-utem-blue to-utem-purple group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <a href="/chatbot/" class="relative rounded-full px-3 py-1.5 text-utem-dark hover:text-utem-blue transition-colors group">
+              Chatbot
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-utem-blue to-utem-purple group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <a href="/crea/" class="relative rounded-full px-3 py-1.5 text-utem-dark hover:text-utem-blue transition-colors group">
+              Crea
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-utem-blue to-utem-purple group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <a href="/jefe/" class="relative rounded-full px-3 py-1.5 text-utem-dark hover:text-utem-blue transition-colors group">
+              Jefe de carrera
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-utem-blue to-utem-purple group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <a href="/presentacion/" class="relative rounded-full px-3 py-1.5 text-utem-dark hover:text-utem-blue transition-colors group">
+              Presentación
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-utem-blue to-utem-purple group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <a href="/muro-recuerdo/" class="relative rounded-full px-3 py-1.5 text-utem-dark hover:text-utem-blue transition-colors group">
+              Muro
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-utem-blue to-utem-purple group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <a href="/contacto/" class="relative rounded-full px-3 py-1.5 text-utem-dark hover:text-utem-blue transition-colors group">
+              Contacto
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-utem-blue to-utem-purple group-hover:w-full transition-all duration-300"></span>
+            </a>
+          </nav>
+
+          <div class="hidden md:flex items-center justify-self-end gap-3">
+            <a data-admin-link href="/login/" class="rounded-full border border-utem-blue/20 bg-white px-5 py-3 text-sm font-bold text-utem-blue transition-all duration-300 hover:border-utem-blue hover:bg-utem-blue/5">
+              <span data-admin-label>Cuenta UTEM</span>
+            </a>
+            <a href="/contacto/" class="group relative rounded-full bg-gradient-utem px-6 py-3 text-sm font-bold text-white transition-all duration-300 hover:shadow-glowBlue hover:scale-105 active:scale-95">
+              <span class="relative z-10">Postular / Contacto</span>
+              <div class="absolute inset-0 rounded-full bg-gradient-utem-reverse opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </a>
+          </div>
+
+          <button id="menu-btn" class="group block justify-self-end text-utem-blue focus:outline-none p-2 rounded-lg hover:bg-gradient-to-r hover:from-utem-blue/10 hover:to-utem-purple/10 transition-all md:hidden">
+            <svg class="w-8 h-8 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden border-t border-utem-gray/50 bg-white/95 backdrop-blur-md px-6 py-4 shadow-inner animate-slide-up">
+          <nav class="flex flex-col gap-3 text-base font-medium text-utem-dark">
+            <a href="/" class="group rounded-lg p-3 hover:bg-gradient-to-r hover:from-utem-blue/5 hover:to-utem-purple/5 hover:text-utem-blue transition-all">
+              <span class="flex items-center gap-3">
+                <div class="h-1 w-3 rounded-full bg-utem-blue group-hover:w-6 transition-all"></div>
+                Inicio
+              </span>
+            </a>
+            <a href="/proyectos/" class="group rounded-lg p-3 hover:bg-gradient-to-r hover:from-utem-blue/5 hover:to-utem-purple/5 hover:text-utem-blue transition-all">
+              <span class="flex items-center gap-3">
+                <div class="h-1 w-3 rounded-full bg-utem-blue group-hover:w-6 transition-all"></div>
+                Proyectos
+              </span>
+            </a>
+            <a href="/integrantes/" class="group rounded-lg p-3 hover:bg-gradient-to-r hover:from-utem-blue/5 hover:to-utem-purple/5 hover:text-utem-blue transition-all">
+              <span class="flex items-center gap-3">
+                <div class="h-1 w-3 rounded-full bg-utem-blue group-hover:w-6 transition-all"></div>
+                Integrantes CE
+              </span>
+            </a>
+            <a href="/chatbot/" class="group rounded-lg p-3 hover:bg-gradient-to-r hover:from-utem-blue/5 hover:to-utem-purple/5 hover:text-utem-blue transition-all">
+              <span class="flex items-center gap-3">
+                <div class="h-1 w-3 rounded-full bg-utem-blue group-hover:w-6 transition-all"></div>
+                Chatbot
+              </span>
+            </a>
+            <a href="/crea/" class="group rounded-lg p-3 hover:bg-gradient-to-r hover:from-utem-blue/5 hover:to-utem-purple/5 hover:text-utem-blue transition-all">
+              <span class="flex items-center gap-3">
+                <div class="h-1 w-3 rounded-full bg-utem-blue group-hover:w-6 transition-all"></div>
+                Crea
+              </span>
+            </a>
+            <a href="/jefe/" class="group rounded-lg p-3 hover:bg-gradient-to-r hover:from-utem-blue/5 hover:to-utem-purple/5 hover:text-utem-blue transition-all">
+              <span class="flex items-center gap-3">
+                <div class="h-1 w-3 rounded-full bg-utem-blue group-hover:w-6 transition-all"></div>
+                Jefe de carrera
+              </span>
+            </a>
+            <a href="/presentacion/" class="group rounded-lg p-3 hover:bg-gradient-to-r hover:from-utem-blue/5 hover:to-utem-purple/5 hover:text-utem-blue transition-all">
+              <span class="flex items-center gap-3">
+                <div class="h-1 w-3 rounded-full bg-utem-blue group-hover:w-6 transition-all"></div>
+                Presentación
+              </span>
+            </a>
+            <a href="/muro-recuerdo/" class="group rounded-lg p-3 hover:bg-gradient-to-r hover:from-utem-blue/5 hover:to-utem-purple/5 hover:text-utem-blue transition-all">
+              <span class="flex items-center gap-3">
+                <div class="h-1 w-3 rounded-full bg-utem-blue group-hover:w-6 transition-all"></div>
+                Muro del recuerdo
+              </span>
+            </a>
+            <a href="/contacto/" class="group rounded-lg p-3 hover:bg-gradient-to-r hover:from-utem-blue/5 hover:to-utem-purple/5 hover:text-utem-blue transition-all">
+              <span class="flex items-center gap-3">
+                <div class="h-1 w-3 rounded-full bg-utem-blue group-hover:w-6 transition-all"></div>
+                Contacto
+              </span>
+            </a>
+            <a data-admin-link href="/login/" class="group rounded-lg p-3 hover:bg-gradient-to-r hover:from-utem-blue/5 hover:to-utem-purple/5 hover:text-utem-blue transition-all">
+              <span class="flex items-center gap-3">
+                <div class="h-1 w-3 rounded-full bg-utem-blue group-hover:w-6 transition-all"></div>
+                <span data-admin-label>Cuenta UTEM</span>
+              </span>
+            </a>
+            <a href="/contacto/" class="mt-3 rounded-full bg-gradient-utem px-6 py-3 text-center text-white font-bold hover:shadow-glowBlue transition-all">
+              Postular / Contacto
+            </a>
+          </nav>
+        </div>
+      </header>
+
+      <main class={mainClass}>
+        <slot />
+      </main>
+
+      {!hideFooter && <Footer />}
+
+    </div>
+
+    <script is:inline define:vars={{ adminApiBase }} type="module">
+      const adminTokenKey = 'ce-admin-token';
+      const studentTokenKey = 'ce-student-token';
+      const btn = document.getElementById('menu-btn');
+      const menu = document.getElementById('mobile-menu');
+      if (btn && menu) {
+        btn.addEventListener('click', () => {
+          menu.classList.toggle('hidden');
+          menu.classList.toggle('animate-slide-up');
+        });
+      }
+
+      const adminLinks = Array.from(document.querySelectorAll('[data-admin-link]'));
+      const setAdminLabel = (text) => {
+        adminLinks.forEach((link) => {
+          const label = link.querySelector('[data-admin-label]');
+          if (label) {
+            label.textContent = text;
+          } else {
+            link.textContent = text;
+          }
+        });
+      };
+
+      const setLoginMode = () => {
+        const returnTo = `${window.location.pathname}${window.location.search}`;
+        adminLinks.forEach((link) => {
+          link.setAttribute('href', `/login/?returnTo=${encodeURIComponent(returnTo)}`);
+          link.onclick = null;
+        });
+        setAdminLabel('Cuenta UTEM');
+      };
+
+      const setLogoutMode = (label, keyToClear) => {
+        adminLinks.forEach((link) => {
+          link.setAttribute('href', '#');
+          link.onclick = (event) => {
+            event.preventDefault();
+            window.localStorage.removeItem(keyToClear);
+            window.location.reload();
+          };
+        });
+        setAdminLabel(label);
+      };
+
+      const validateSession = async (token, endpoint) => {
+        if (!token) return false;
+        try {
+          const response = await fetch(`${adminApiBase}${endpoint}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          return response.ok;
+        } catch (error) {
+          return false;
+        }
+      };
+
+      const adminToken = window.localStorage.getItem(adminTokenKey) || '';
+      const studentToken = window.localStorage.getItem(studentTokenKey) || '';
+      if (adminToken && await validateSession(adminToken, '/admin/me')) {
+        setLogoutMode('Salir', adminTokenKey);
+      } else if (studentToken && await validateSession(studentToken, '/auth/me')) {
+        setLogoutMode('Salir', studentTokenKey);
+      } else {
+        if (adminToken) {
+          window.localStorage.removeItem(adminTokenKey);
+        }
+        if (studentToken) {
+          window.localStorage.removeItem(studentTokenKey);
+        }
+        setLoginMode();
+      }
+    </script>
+  </body>
+</html>
+
+

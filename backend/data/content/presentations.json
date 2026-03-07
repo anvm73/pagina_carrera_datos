@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "id": "bienvenida-ciencia-de-datos-2026",
+      "title": "Bienvenida Ciencia de Datos 2026",
+      "description": "Documento PDF disponible para presentacion.",
+      "pdf_url": "/presentaciones/Bienvenida%20Ciencia%20de%20Datos%202026.pdf",
+      "storage": "frontend-public",
+      "file_name": "Bienvenida Ciencia de Datos 2026.pdf",
+      "created_at": "2026-03-02T20:30:39.632737+00:00"
+    },
+    {
+      "id": "ingenieria-civil-en-ciencia-de-datos",
+      "title": "ingenieria civil en ciencia de datos",
+      "description": "Documento PDF disponible para presentacion.",
+      "pdf_url": "/presentaciones/ingenieria-civil-en-ciencia-de-datos.pdf",
+      "storage": "frontend-public",
+      "file_name": "ingenieria-civil-en-ciencia-de-datos.pdf",
+      "created_at": "2026-03-02T17:50:23.797065+00:00"
+    },
+    {
+      "id": "estatutos",
+      "title": "Estatutos",
+      "description": "Biblia de Ciencia de datos",
+      "pdf_url": "/media/presentations/estatutos-estatutos-ciencia-de-datos-1-20260307025119377259.pdf",
+      "storage": "media",
+      "file_name": "estatutos-estatutos-ciencia-de-datos-1-20260307025119377259.pdf",
+      "created_at": "2026-03-07T02:51:19.378260+00:00"
+    }
+  ]
+}

@@ -1,0 +1,437 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import '../styles/global.css';
+
+const projectsApiBase = (import.meta.env.PUBLIC_PROJECTS_API_URL || '/api').replace(/\/$/, '');
+---
+
+<MainLayout>
+  <div class="space-y-8 animate-fade-in">
+    <header class="relative overflow-hidden rounded-2xl border border-utem-gray/50 bg-gradient-to-r from-utem-blueDark via-utem-blue to-utem-purple p-8 md:p-10 shadow-glow">
+      <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute top-0 left-1/4 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
+        <div class="absolute bottom-0 right-1/4 h-40 w-40 rounded-full bg-utem-skySoft/20 blur-3xl"></div>
+      </div>
+      <div class="relative z-10 space-y-4 text-center md:text-left">
+        <p class="text-sm font-bold uppercase tracking-wider text-white/90">Proyectos</p>
+        <h1 class="text-4xl md:text-5xl font-bold text-white leading-tight">
+          Repositorio de repositorios
+        </h1>
+        <p class="text-lg text-white/90 max-w-3xl">
+          Espacio colaborativo para publicar repos, carpetas y trabajos interesantes de la comunidad ICCD.
+        </p>
+      </div>
+    </header>
+
+    <section class="grid gap-6 md:grid-cols-2">
+      <article class="rounded-2xl border border-utem-gray/50 bg-white p-6 shadow-subtle">
+        <h2 class="text-xl font-bold text-utem-blue">Como funciona</h2>
+        <ul class="mt-4 space-y-2 text-sm text-utem-dark/80">
+          <li>1. Publicas un repo (URL) o subes una carpeta de tu proyecto.</li>
+          <li>2. Validamos que sea contenido academico o tecnico relevante.</li>
+          <li>3. Queda disponible en este catalogo para difusion estudiantil.</li>
+        </ul>
+      </article>
+      <article class="rounded-2xl border border-utem-gray/50 bg-white p-6 shadow-subtle">
+        <h2 class="text-xl font-bold text-utem-purple">Categorias sugeridas</h2>
+        <div class="mt-4 flex flex-wrap gap-2 text-sm">
+          <span class="rounded-full border border-utem-blue/30 bg-utem-blue/5 px-3 py-1 text-utem-blue">IA / Chatbots</span>
+          <span class="rounded-full border border-utem-purple/30 bg-utem-purple/5 px-3 py-1 text-utem-purple">Ciencia de Datos</span>
+          <span class="rounded-full border border-utem-teal/30 bg-utem-teal/5 px-3 py-1 text-utem-teal">Vision Computacional</span>
+          <span class="rounded-full border border-utem-green/30 bg-utem-green/5 px-3 py-1 text-utem-green">Web / Apps</span>
+          <span class="rounded-full border border-utem-grayBlue/30 bg-utem-grayBlue/5 px-3 py-1 text-utem-grayBlue">Automatizacion</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="rounded-2xl border border-utem-gray/50 bg-white p-6 shadow-subtle">
+      <div class="flex items-center justify-between gap-3">
+        <h2 class="text-2xl font-bold text-utem-dark">Repositorios publicados</h2>
+        <button
+          id="refresh-projects"
+          type="button"
+          class="rounded-lg border border-utem-gray/50 px-4 py-2 text-sm font-semibold text-utem-dark transition-colors hover:border-utem-blue hover:text-utem-blue"
+        >
+          Actualizar
+        </button>
+      </div>
+      <div id="projects-admin-notice" class="mt-4"></div>
+      <p id="projects-empty" class="mt-4 text-sm text-utem-dark/70">Cargando proyectos...</p>
+      <div id="projects-list" class="mt-4 grid gap-4 md:grid-cols-2"></div>
+    </section>
+
+    <section class="rounded-2xl border border-utem-gray/50 bg-gradient-card p-6 shadow-subtle">
+      <h2 class="text-2xl font-bold text-utem-dark">Subir proyecto o trabajo</h2>
+      <p class="mt-2 text-sm text-utem-dark/80">
+        Completa el formulario con tu correo UTEM. Puedes enviar un repo o subir una carpeta con archivos.
+      </p>
+
+      <form id="project-form" class="mt-6 grid gap-4">
+        <div class="grid gap-4 md:grid-cols-2">
+          <label class="space-y-1">
+            <span class="text-sm font-semibold text-utem-dark">Nombre completo</span>
+            <input
+              id="nombre"
+              name="nombre"
+              type="text"
+              required
+              class="w-full rounded-lg border border-utem-gray/60 px-3 py-2 text-sm focus:border-utem-blue focus:outline-none"
+              placeholder="Nombre Apellido"
+            />
+          </label>
+          <label class="space-y-1">
+            <span class="text-sm font-semibold text-utem-dark">Correo UTEM</span>
+            <input
+              id="correo-utem"
+              name="correo_utem"
+              type="email"
+              required
+              class="w-full rounded-lg border border-utem-gray/60 px-3 py-2 text-sm focus:border-utem-blue focus:outline-none"
+              placeholder="usuario@utem.cl"
+            />
+          </label>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-2">
+          <label class="space-y-1">
+            <span class="text-sm font-semibold text-utem-dark">Nombre del proyecto</span>
+            <input
+              id="titulo"
+              name="titulo"
+              type="text"
+              required
+              class="w-full rounded-lg border border-utem-gray/60 px-3 py-2 text-sm focus:border-utem-blue focus:outline-none"
+              placeholder="Mi proyecto ICCD"
+            />
+          </label>
+          <label class="space-y-1">
+            <span class="text-sm font-semibold text-utem-dark">Tipo de envio</span>
+            <select
+              id="tipo-envio"
+              name="tipo_envio"
+              class="w-full rounded-lg border border-utem-gray/60 px-3 py-2 text-sm focus:border-utem-blue focus:outline-none"
+            >
+              <option value="repo">Repositorio (GitHub/GitLab)</option>
+              <option value="carpeta">Carpeta de archivos</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="space-y-1">
+          <span class="text-sm font-semibold text-utem-dark">Descripcion</span>
+          <textarea
+            id="descripcion"
+            name="descripcion"
+            rows="4"
+            class="w-full rounded-lg border border-utem-gray/60 px-3 py-2 text-sm focus:border-utem-blue focus:outline-none"
+            placeholder="Describe objetivo, tecnologia y estado del proyecto."
+          ></textarea>
+        </label>
+
+        <label id="repo-url-wrapper" class="space-y-1">
+          <span class="text-sm font-semibold text-utem-dark">URL del repositorio</span>
+          <input
+            id="repo-url"
+            name="repo_url"
+            type="url"
+            class="w-full rounded-lg border border-utem-gray/60 px-3 py-2 text-sm focus:border-utem-blue focus:outline-none"
+            placeholder="https://github.com/usuario/proyecto"
+          />
+        </label>
+
+        <label id="folder-wrapper" class="space-y-1 hidden">
+          <span class="text-sm font-semibold text-utem-dark">Carpeta del proyecto</span>
+          <input
+            id="folder-files"
+            type="file"
+            multiple
+            webkitdirectory
+            directory
+            class="w-full rounded-lg border border-utem-gray/60 px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-utem-blue/10 file:px-3 file:py-1 file:text-utem-blue"
+          />
+          <span class="block text-xs text-utem-dark/60">Selecciona la carpeta raiz del proyecto para subirla completa.</span>
+        </label>
+
+        <div class="flex flex-wrap items-center gap-3 pt-2">
+          <button
+            id="submit-project"
+            type="submit"
+            class="rounded-lg bg-gradient-utem px-5 py-2.5 text-sm font-bold text-white transition-all hover:shadow-glowBlue"
+          >
+            Enviar proyecto
+          </button>
+          <p id="submit-status" class="text-sm text-utem-dark/80"></p>
+        </div>
+      </form>
+    </section>
+  </div>
+</MainLayout>
+
+<script is:inline define:vars={{ apiBase: projectsApiBase }}>
+  window.CE_API_BASE = apiBase;
+</script>
+
+<script type="module">
+  import {
+    buildLoginUrl,
+    escapeHtml,
+    formatDate,
+    isAdminSession,
+    renderAdminNotice,
+    requestJson,
+  } from '/admin-client.js';
+
+  const apiBase = window.CE_API_BASE || '/api';
+  const listEndpoint = `${apiBase}/projects/public`;
+  const submitEndpoint = `${apiBase}/projects/submit`;
+
+  const listEl = document.getElementById('projects-list');
+  const emptyEl = document.getElementById('projects-empty');
+  const refreshBtn = document.getElementById('refresh-projects');
+  const adminNoticeEl = document.getElementById('projects-admin-notice');
+  const form = document.getElementById('project-form');
+  const statusEl = document.getElementById('submit-status');
+  const submitBtn = document.getElementById('submit-project');
+  const tipoEnvioEl = document.getElementById('tipo-envio');
+  const repoWrapper = document.getElementById('repo-url-wrapper');
+  const folderWrapper = document.getElementById('folder-wrapper');
+  const repoUrlEl = document.getElementById('repo-url');
+  const folderFilesEl = document.getElementById('folder-files');
+  const nombreEl = document.getElementById('nombre');
+  const correoEl = document.getElementById('correo-utem');
+  const tituloEl = document.getElementById('titulo');
+  const descripcionEl = document.getElementById('descripcion');
+
+  if (
+    !listEl ||
+    !emptyEl ||
+    !refreshBtn ||
+    !adminNoticeEl ||
+    !form ||
+    !statusEl ||
+    !submitBtn ||
+    !tipoEnvioEl ||
+    !repoWrapper ||
+    !folderWrapper ||
+    !repoUrlEl ||
+    !folderFilesEl ||
+    !nombreEl ||
+    !correoEl ||
+    !tituloEl ||
+    !descripcionEl
+  ) {
+    throw new Error('Faltan elementos del modulo de proyectos.');
+  }
+
+  let adminMode = false;
+
+  const renderProjects = (items) => {
+    listEl.innerHTML = '';
+
+    if (!items || items.length === 0) {
+      emptyEl.textContent = 'Todavia no hay envios publicados.';
+      return;
+    }
+
+    emptyEl.textContent = '';
+    items.forEach((item) => {
+      const card = document.createElement('article');
+      card.className = 'rounded-xl border border-utem-gray/50 bg-white p-4 shadow-subtle';
+      card.dataset.projectId = item.id || '';
+
+      if (adminMode) {
+        card.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <p class="text-xs font-semibold uppercase tracking-wide text-utem-dark/60">${escapeHtml(item.submission_type || 'proyecto')}</p>
+            <div class="flex gap-2">
+              <button data-action="save-project" type="button" class="rounded-full bg-gradient-utem px-4 py-2 text-xs font-bold text-white">Guardar</button>
+              <button data-action="delete-project" type="button" class="rounded-full border border-red-300 px-4 py-2 text-xs font-bold text-red-600">Eliminar</button>
+            </div>
+          </div>
+          <div class="mt-4 grid gap-3">
+            <input data-field="title" type="text" value="${escapeHtml(item.title || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Titulo" />
+            <textarea data-field="description" rows="4" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Descripcion">${escapeHtml(item.description || '')}</textarea>
+            <div class="grid gap-3 md:grid-cols-2">
+              <input data-field="author_name" type="text" value="${escapeHtml(item.author_name || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Autor" />
+              <input data-field="utem_email" type="email" value="${escapeHtml(item.utem_email || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Correo UTEM" />
+            </div>
+            <input data-field="repo_url" type="url" value="${escapeHtml(item.repo_url || '')}" class="rounded-xl border border-utem-gray/60 px-4 py-3 text-sm focus:border-utem-blue focus:outline-none" placeholder="Repositorio" />
+            <p class="text-xs text-utem-dark/60">${escapeHtml(formatDate(item.created_at))}</p>
+          </div>
+        `;
+      } else {
+        const repoLink = item.repo_url
+          ? `<a href="${escapeHtml(item.repo_url)}" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-utem-blue hover:underline">Abrir repositorio</a>`
+          : `<span class="text-xs text-utem-dark/60">${escapeHtml(item.files_count || '0')} archivo(s) adjuntos</span>`;
+
+        card.innerHTML = `
+          <p class="text-xs font-semibold uppercase tracking-wide text-utem-dark/60">${escapeHtml(item.submission_type || 'proyecto')}</p>
+          <h3 class="mt-1 text-lg font-bold text-utem-dark">${escapeHtml(item.title || 'Proyecto')}</h3>
+          <p class="mt-2 text-sm text-utem-dark/80">${escapeHtml(item.description || 'Sin descripcion')}</p>
+          <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-utem-dark/70">
+            <span>${escapeHtml(item.author_name || 'Autor no informado')}</span>
+            <span>|</span>
+            <span>${escapeHtml(item.utem_email || '')}</span>
+            <span>|</span>
+            <span>${escapeHtml(formatDate(item.created_at))}</span>
+          </div>
+          <div class="mt-4">${repoLink}</div>
+        `;
+      }
+
+      listEl.appendChild(card);
+    });
+  };
+
+  const loadProjects = async () => {
+    emptyEl.textContent = 'Cargando proyectos...';
+    try {
+      const response = await fetch(listEndpoint);
+      if (!response.ok) throw new Error('No se pudo cargar el listado');
+      const data = await response.json();
+      renderProjects(data.items || []);
+    } catch (error) {
+      emptyEl.textContent = 'No fue posible cargar proyectos desde el servidor.';
+    }
+  };
+
+  const toggleSubmissionFields = () => {
+    const kind = tipoEnvioEl.value;
+    const isRepo = kind === 'repo';
+
+    repoWrapper.classList.toggle('hidden', !isRepo);
+    folderWrapper.classList.toggle('hidden', isRepo);
+    repoUrlEl.required = isRepo;
+  };
+
+  const setStatus = (message, tone) => {
+    statusEl.textContent = message;
+    statusEl.classList.remove('text-utem-dark/80', 'text-red-600', 'text-green-700');
+    if (tone === 'error') {
+      statusEl.classList.add('text-red-600');
+    } else if (tone === 'success') {
+      statusEl.classList.add('text-green-700');
+    } else {
+      statusEl.classList.add('text-utem-dark/80');
+    }
+  };
+
+  let submitting = false;
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (submitting) return;
+
+    const nombre = nombreEl.value.trim();
+    const correo = correoEl.value.trim().toLowerCase();
+    const titulo = tituloEl.value.trim();
+    const descripcion = descripcionEl.value.trim();
+    const tipoEnvio = tipoEnvioEl.value;
+    const repoUrl = repoUrlEl.value.trim();
+    const files = folderFilesEl.files ? Array.from(folderFilesEl.files) : [];
+
+    if (!correo.endsWith('@utem.cl')) {
+      setStatus('Debes usar un correo institucional @utem.cl', 'error');
+      return;
+    }
+    if (tipoEnvio === 'repo' && !repoUrl) {
+      setStatus('Debes incluir la URL del repositorio.', 'error');
+      return;
+    }
+    if (tipoEnvio === 'carpeta' && files.length === 0) {
+      setStatus('Debes seleccionar una carpeta para subir.', 'error');
+      return;
+    }
+
+    submitting = true;
+    submitBtn.disabled = true;
+    setStatus('Enviando proyecto...', 'info');
+
+    try {
+      const formData = new FormData();
+      formData.append('nombre', nombre);
+      formData.append('correo_utem', correo);
+      formData.append('titulo', titulo);
+      formData.append('descripcion', descripcion);
+      formData.append('tipo_envio', tipoEnvio);
+      formData.append('repo_url', tipoEnvio === 'repo' ? repoUrl : '');
+
+      if (tipoEnvio === 'carpeta') {
+        files.forEach((file) => {
+          const relativeName = file.webkitRelativePath || file.name;
+          formData.append('files', file, relativeName);
+        });
+      }
+
+      const response = await fetch(submitEndpoint, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.detail || 'No se pudo enviar el proyecto');
+      }
+
+      setStatus('Proyecto enviado correctamente. Gracias por aportar.', 'success');
+      form.reset();
+      toggleSubmissionFields();
+      await loadProjects();
+    } catch (error) {
+      setStatus(error.message || 'Error al enviar proyecto.', 'error');
+    } finally {
+      submitting = false;
+      submitBtn.disabled = false;
+    }
+  });
+
+  tipoEnvioEl.addEventListener('change', toggleSubmissionFields);
+  refreshBtn.addEventListener('click', loadProjects);
+  listEl.addEventListener('click', async (event) => {
+    if (!adminMode) return;
+
+    const button = event.target.closest('button[data-action]');
+    if (!button) return;
+    const card = button.closest('[data-project-id]');
+    if (!card) return;
+    const projectId = card.dataset.projectId;
+
+    try {
+      if (button.dataset.action === 'delete-project') {
+        if (!window.confirm('Se eliminara este proyecto. Deseas continuar?')) return;
+        await requestJson(`/admin/projects/${projectId}`, { method: 'DELETE' }, apiBase);
+        await loadProjects();
+        return;
+      }
+
+      if (button.dataset.action === 'save-project') {
+        const payload = {};
+        ['title', 'description', 'author_name', 'utem_email', 'repo_url'].forEach((field) => {
+          payload[field] = card.querySelector(`[data-field="${field}"]`)?.value || '';
+        });
+        await requestJson(`/admin/projects/${projectId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        }, apiBase);
+        setStatus('Proyecto actualizado.', 'success');
+        await loadProjects();
+      }
+    } catch (error) {
+      setStatus(error.message || 'No fue posible actualizar el proyecto.', 'error');
+    }
+  });
+
+  toggleSubmissionFields();
+  adminMode = await isAdminSession(apiBase);
+  renderAdminNotice(adminNoticeEl, {
+    isAdmin: adminMode,
+    sectionLabel: 'la seccion de proyectos',
+  });
+  if (!adminMode) {
+    const loginHref = buildLoginUrl();
+    adminNoticeEl.querySelector('a')?.setAttribute('href', loginHref);
+  }
+  loadProjects();
+</script>
