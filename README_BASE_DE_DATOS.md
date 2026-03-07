@@ -3,13 +3,38 @@
 Esta guia explica:
 
 - como levantar PostgreSQL
+- como generar `backend/.env` de forma segura
 - como entrar a la base
 - como ver lo que hay guardado
 - como sacar un backup
 - como restaurarlo en otra maquina
 - que cosas viajan en la base y cuales no
 
-## 1. Levantar el proyecto con Docker
+## 1. Generar backend/.env
+
+El repo no incluye `backend/.env` por seguridad, incluso siendo privado.
+
+Generalo automaticamente con:
+
+```powershell
+.\scripts\init-shared-deploy.ps1
+```
+
+Ese script:
+
+- crea `backend/.env`
+- genera `POSTGRES_PASSWORD`
+- genera `ADMIN_TOKEN_SECRET`
+- genera `STUDENT_TOKEN_SECRET`
+- genera una clave admin nueva
+
+Si quieres definir una clave admin manualmente:
+
+```powershell
+.\scripts\init-shared-deploy.ps1 -AdminPassword "TuClaveSegura123"
+```
+
+## 2. Levantar el proyecto con Docker
 
 Desde la raiz del proyecto:
 
@@ -32,7 +57,7 @@ Puertos:
 - API: `http://localhost:8000`
 - PostgreSQL: `localhost:5432`
 
-## 2. Entrar a PostgreSQL
+## 3. Entrar a PostgreSQL
 
 Si usas los valores por defecto de este proyecto:
 
@@ -54,7 +79,7 @@ select count(*) from shared_board_states;
 \q
 ```
 
-## 3. Que queda guardado en PostgreSQL
+## 4. Que queda guardado en PostgreSQL
 
 La base guarda:
 
@@ -65,7 +90,7 @@ La base guarda:
 - texto introductorio del muro
 - pizarra compartida de `Crea`
 
-## 4. Que NO queda guardado en PostgreSQL
+## 5. Que NO queda guardado en PostgreSQL
 
 Estas cosas siguen como archivos en disco:
 
@@ -78,7 +103,37 @@ Y ademas:
 - la cuenta admin no vive en la base
 - la cuenta admin vive en `backend/.env`
 
-## 5. Crear un backup de la base
+## 6. Backup incluido en este repo
+
+Este repo privado ya incluye un dump listo para restaurar:
+
+- `backups\ce-iccd.sql`
+
+Tambien puedes generar uno nuevo cuando quieras con:
+
+```powershell
+.\scripts\db-backup.ps1 -OutputPath backups\ce-iccd.sql
+```
+
+## 7. Restaurar la base en otra maquina
+
+En la otra maquina solo hace falta:
+
+1. Clonar el repo.
+2. Generar `backend/.env`.
+3. Levantar contenedores.
+4. Restaurar `backups\ce-iccd.sql`.
+
+Comandos:
+
+```powershell
+.\scripts\init-shared-deploy.ps1
+docker compose build
+docker compose up -d
+.\scripts\db-restore.ps1 -InputPath backups\ce-iccd.sql
+```
+
+## 8. Crear un backup nuevo de la base
 
 La forma mas simple es usar el script:
 
@@ -94,43 +149,29 @@ New-Item -ItemType Directory -Force backups
 
 Eso genera un archivo `.sql` con todo lo que hay en PostgreSQL, incluyendo la pizarra compartida de `Crea`.
 
-## 6. Restaurar la base en otra maquina
+## 9. Que hay que compartirle a otra persona
 
-En la otra maquina:
+Si usas este repo privado, ya viajan dentro del clone:
 
-1. Clona el repo.
-2. Crea `backend/.env` a partir de `backend/.env.example`.
-3. Levanta los contenedores.
-4. Restaura el backup.
-
-Comandos:
-
-```powershell
-copy backend\.env.example backend\.env
-docker compose build
-docker compose up -d
-.\scripts\db-restore.ps1 -InputPath backups\ce-iccd.sql
-```
-
-## 7. Que hay que compartirle a otra persona
-
-Para que otra persona levante el sitio con la misma informacion actual, debes entregarle:
-
-- el repo
-- un backup SQL de PostgreSQL
-- `backend/.env`
+- `backups\ce-iccd.sql`
 - `backend/data/uploads`
-- `backend/data/project_submissions` si quieres conservar proyectos enviados
+- `backend/data/project_submissions`
+
+Entonces ya no necesitas mandar esas carpetas por separado.
+
+Solo debes compartir:
+
+- acceso al repo privado
+- la instruccion de correr `.\scripts\init-shared-deploy.ps1`
 
 En resumen:
 
 - `Git` lleva el codigo
-- `backup.sql` lleva la base
-- `backend/data/uploads` lleva PDFs e imagenes que aun viven en disco
-- `backend/data/project_submissions` lleva los proyectos de alumnos
-- `backend/.env` lleva secretos y credenciales admin
+- `backups\ce-iccd.sql` lleva la base versionada
+- `backend/data/uploads` y `backend/data/project_submissions` ya vienen en el repo
+- `backend/.env` se genera localmente en cada despliegue
 
-## 8. Comprobaciones utiles
+## 10. Comprobaciones utiles
 
 Ver salud del backend:
 
@@ -150,28 +191,21 @@ Ver cuantas filas tiene la pizarra en PostgreSQL:
 docker compose exec postgres psql -U ce_iccd -d ce_iccd -c "select key, updated_by, updated_at from shared_board_states;"
 ```
 
-## 9. Flujo recomendado para entregar el proyecto
+## 11. Flujo recomendado para entregar el proyecto
 
-1. Ejecuta un backup:
+1. Haz `git pull` del repo privado.
+2. Genera `backend/.env`:
 
 ```powershell
-.\scripts\db-backup.ps1 -OutputPath backups\ce-iccd.sql
+.\scripts\init-shared-deploy.ps1
 ```
 
-2. Comprime o copia:
+3. Levanta Docker y restaura la base:
 
-- el repo
-- `backups\ce-iccd.sql`
-- `backend/data/uploads`
-- `backend/data/project_submissions`
-- `backend/.env`
+```powershell
+docker compose build
+docker compose up -d
+.\scripts\db-restore.ps1 -InputPath backups\ce-iccd.sql
+```
 
-3. La otra persona:
-
-- clona el repo
-- deja su `backend/.env`
-- levanta `docker compose up -d`
-- restaura el backup
-- copia las carpetas de archivos
-
-Con eso la otra persona queda con la pagina, la base y el contenido listo para desplegar.
+Con eso la otra persona queda con la pagina, la base y el contenido listo para desplegar desde este mismo repo privado.

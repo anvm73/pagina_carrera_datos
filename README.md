@@ -107,7 +107,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\share-link.ps1 -NoOp
 
 ### Opcion 1: Docker Compose
 
-1. Copia `backend/.env.example` a `backend/.env` y cambia las claves/secretos.
+1. Genera `backend/.env` con:
+
+```powershell
+.\scripts\init-shared-deploy.ps1
+```
+
 2. Desde la raiz ejecuta:
 
 ```bash
@@ -134,39 +139,33 @@ El frontend queda sirviendo el sitio estatico y reenviando `/api/*` al backend.
 Si otra persona despliega el proyecto y quiere conservar tambien los datos:
 
 1. Debe llevarse el codigo.
-2. Debe llevarse el dump de PostgreSQL.
-3. Debe llevarse `backend/data/uploads` si quiere conservar imagenes/PDFs subidos.
+2. Debe restaurar `backups/ce-iccd.sql`.
+3. `backend/data/uploads` y `backend/data/project_submissions` ya vienen dentro de este repo privado.
 
 ### Backup y restore
 
 Crear backup:
 
 ```bash
-docker compose exec postgres pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" > backup.sql
+docker compose exec postgres pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" > backups/ce-iccd.sql
 ```
 
 En PowerShell tambien puedes usar:
 
 ```powershell
-.\scripts\db-backup.ps1
+.\scripts\db-backup.ps1 -OutputPath backups\ce-iccd.sql
 ```
 
 Restaurar backup:
 
 ```bash
-docker compose exec -T postgres psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" < backup.sql
+docker compose exec -T postgres psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" < backups/ce-iccd.sql
 ```
 
 En PowerShell:
 
 ```powershell
-.\scripts\db-restore.ps1 -InputPath backup.sql
-```
-
-Si ademas hubo archivos subidos por admin, copia tambien:
-
-```text
-backend/data/uploads
+.\scripts\db-restore.ps1 -InputPath backups\ce-iccd.sql
 ```
 
 Guia detallada: [DEPLOY_DATABASE.md](/C:/Users/avega/Desktop/BOT_GABRIELITO/landing_page_movile/DEPLOY_DATABASE.md)

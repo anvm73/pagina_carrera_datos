@@ -21,20 +21,13 @@ git clone <URL_DEL_REPO>
 cd landing_page_movile
 ```
 
-Crear variables:
+Generar `backend/.env`:
 
 ```powershell
-copy backend\.env.example backend\.env
+.\scripts\init-shared-deploy.ps1
 ```
 
-Cambia al menos:
-
-- `POSTGRES_PASSWORD`
-- `ADMIN_PASSWORD`
-- `ADMIN_TOKEN_SECRET`
-- `STUDENT_TOKEN_SECRET`
-- `CORS_ALLOW_ORIGINS`
-- `TRUSTED_HOSTS`
+Ese script genera secretos nuevos y deja el despliegue listo sin subir `backend/.env` al repo.
 
 ## 2. Levantar sitio + base
 
@@ -73,7 +66,13 @@ Estos datos aun no viven en PostgreSQL:
 
 ## 5. Backup y restore
 
-Backup:
+Este repo privado ya incluye:
+
+```text
+backups/ce-iccd.sql
+```
+
+Backup nuevo:
 
 ```powershell
 .\scripts\db-backup.ps1 -OutputPath backups\ce-iccd.sql
@@ -89,9 +88,12 @@ Restore:
 
 Para conservar todo, comparte:
 
-- repo
-- `backup.sql`
-- `backend/.env`
+- acceso al repo privado
+- la instruccion de correr `.\scripts\init-shared-deploy.ps1`
+
+El clone ya lleva:
+
+- `backups/ce-iccd.sql`
 - `backend/data/uploads`
 - `backend/data/project_submissions`
 
