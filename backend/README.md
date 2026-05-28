@@ -23,9 +23,18 @@ Copiar variables base:
 copy .env.example .env
 ```
 
+Para el computador de la universidad, desde la raiz del repo usa:
+
+```powershell
+.\scripts\init-local-university.ps1
+```
+
 Variables principales:
 
 - `APP_ENV`
+- `UNIVERSITY_PUBLIC_HOST`
+- `FRONTEND_PORT`
+- `BACKEND_PORT`
 - `TRUSTED_HOSTS`
 - `POSTGRES_HOST`
 - `POSTGRES_PORT`
@@ -80,7 +89,6 @@ backend/
 |   |-- rag_store_chunks/
 |   |-- PDFs/
 |   `-- PDFs_chunks_out/
-|-- notebooks/
 `-- requirements.txt
 ```
 
@@ -113,7 +121,7 @@ docker run --env-file .env -p 8000:8000 ce-iccd-backend
 ## Base de datos y migracion inicial
 
 - El backend usa PostgreSQL si encuentra `POSTGRES_*` o `DATABASE_URL`.
-- Si no encuentra configuracion de PostgreSQL, usa SQLite local en `backend/data/ce_iccd.db`.
+- Si no encuentra configuracion de PostgreSQL, usa SQLite local en `backend/data/ce_iccd.db`; este es el camino principal para la universidad.
 - En el primer arranque, si la base esta vacia, importa los datos semilla desde:
   - `backend/data/content/centers.json`
   - `backend/data/content/presentations.json`
@@ -127,7 +135,6 @@ Despues de ese primer arranque, los cambios nuevos quedan en la base de datos, n
 Para que otra persona despliegue el sistema con los mismos datos:
 
 1. Clonar el repo.
-2. Copiar `backend/.env`.
-3. Restaurar un dump de PostgreSQL.
-4. Copiar `backend/data/uploads` si existen imagenes o PDFs subidos por admin.
-5. Levantar `docker compose up -d`.
+2. Ejecutar `.\scripts\init-local-university.ps1` para crear `.env` locales.
+3. Ejecutar `arranque.bat`.
+4. Si decide usar Docker/PostgreSQL, restaurar `backups/ce-iccd.sql`.

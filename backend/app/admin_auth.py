@@ -11,8 +11,8 @@ from typing import Any
 
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "ce.iccd@utem.cl").strip().lower()
 ADMIN_PASSWORD_FROM_ENV = os.getenv("ADMIN_PASSWORD")
-ADMIN_PASSWORD = ADMIN_PASSWORD_FROM_ENV if ADMIN_PASSWORD_FROM_ENV is not None else "carrera21049"
-ADMIN_PASSWORD_IS_IMPLICIT_DEFAULT = ADMIN_PASSWORD_FROM_ENV is None
+ADMIN_PASSWORD = ADMIN_PASSWORD_FROM_ENV.strip() if ADMIN_PASSWORD_FROM_ENV is not None else ""
+ADMIN_PASSWORD_IS_IMPLICIT_DEFAULT = not ADMIN_PASSWORD
 ADMIN_TOKEN_SECRET = os.getenv(
     "ADMIN_TOKEN_SECRET",
     "ce-iccd-admin-secret-change-me",
@@ -30,6 +30,8 @@ def _b64url_decode(value: str) -> bytes:
 
 
 def verify_credentials(email: str, password: str) -> bool:
+    if not ADMIN_PASSWORD:
+        return False
     email_clean = email.strip().lower()
     return hmac.compare_digest(email_clean, ADMIN_EMAIL) and hmac.compare_digest(
         password,

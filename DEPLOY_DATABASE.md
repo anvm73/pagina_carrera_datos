@@ -18,7 +18,7 @@ Clonar repo:
 
 ```bash
 git clone <URL_DEL_REPO>
-cd landing_page_movile
+cd <carpeta-del-repo>
 ```
 
 Generar `backend/.env`:
@@ -101,4 +101,4 @@ El clone ya lleva:
 
 Guia completa para entrar a PostgreSQL, revisar tablas, sacar backup y compartir el proyecto:
 
-[README_BASE_DE_DATOS.md](/C:/Users/avega/Desktop/BOT_GABRIELITO/landing_page_movile/README_BASE_DE_DATOS.md)
+[README_BASE_DE_DATOS.md](README_BASE_DE_DATOS.md)

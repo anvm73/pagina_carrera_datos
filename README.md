@@ -27,8 +27,8 @@ Este repositorio esta organizado en dos modulos principales:
 
 - Node.js 18+
 - npm 9+
-- Python 3.10+ (recomendado 3.11)
-- Ollama corriendo localmente (para el backend chatbot)
+- Python 3.10+ (recomendado 3.11 o 3.12)
+- Ollama corriendo localmente solo si quieres usar el chatbot
 
 ## Inicio rapido
 
@@ -59,15 +59,29 @@ arranque.bat
 ```
 
 Este script:
-1. Analiza dependencias de frontend y backend.
-2. Instala lo faltante automaticamente.
-3. Abre dos ventanas (`frontend` y `backend`) y levanta ambos servicios.
+1. Genera `backend/.env` y `frontend/.env` si faltan.
+2. Analiza dependencias de frontend y backend.
+3. Instala lo faltante automaticamente.
+4. Abre dos ventanas (`frontend` y `backend`) y levanta ambos servicios para localhost y red local.
 
 Modos utiles:
 ```bat
 arranque.bat --check
 arranque.bat --prepare-only
 ```
+
+## Entrega en universidad
+
+El camino recomendado para el computador dedicado de la universidad es Windows + `arranque.bat` + SQLite versionada:
+
+```powershell
+.\scripts\init-local-university.ps1
+.\arranque.bat
+```
+
+La base principal queda en `backend/data/ce_iccd.db`. Las claves locales quedan en `backend/.env` y `frontend/.env`, ambos ignorados por Git.
+
+Guia corta: [README_UNIVERSIDAD.md](README_UNIVERSIDAD.md)
 
 ## Compartir link temporal (1 comando)
 
@@ -102,10 +116,26 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\share-link.ps1 -NoOp
 
 - Frontend: `frontend/.env.example`
 - Backend: `backend/.env.example`
+- Para la universidad: `scripts/init-local-university.ps1`
 
 ## Despliegue
 
-### Opcion 1: Docker Compose
+### Opcion 1: Windows + SQLite
+
+Este es el flujo principal para el computador de la universidad. No requiere Docker ni restaurar PostgreSQL:
+
+```powershell
+.\scripts\init-local-university.ps1
+.\arranque.bat
+```
+
+Queda disponible en:
+
+- Frontend local: `http://localhost:4321`
+- Backend local: `http://localhost:8000`
+- Frontend red: la URL que imprima `arranque.bat`
+
+### Opcion 2: Docker Compose
 
 1. Genera `backend/.env` con:
 
@@ -130,17 +160,18 @@ El frontend queda sirviendo el sitio estatico y reenviando `/api/*` al backend.
 
 ### Persistencia de datos
 
-- El contenido editable del sitio (`muro`, `integrantes`, `presentaciones`, `cuentas`) ahora vive en PostgreSQL.
-- La pizarra compartida de `Crea` tambien vive en PostgreSQL.
-- La base se persiste en el volumen `postgres_data`.
+- En el flujo principal, el contenido editable del sitio vive en `backend/data/ce_iccd.db`.
+- La pizarra compartida de `Crea` tambien viaja en esa SQLite.
+- En Docker Compose, el contenido vive en PostgreSQL y se persiste en el volumen `postgres_data`.
 - Los PDFs de presentaciones, imagenes de integrantes CE y proyectos enviados siguen viviendo en disco.
-- Si la base arranca vacia por primera vez, el backend importa los datos semilla desde los JSON legacy una sola vez.
+- Si la base arranca vacia por primera vez, el backend importa los datos semilla desde `backend/data/content` una sola vez.
 
 Si otra persona despliega el proyecto y quiere conservar tambien los datos:
 
 1. Debe llevarse el codigo.
-2. Debe restaurar `backups/ce-iccd.sql`.
-3. `backend/data/uploads` y `backend/data/project_submissions` ya vienen dentro de este repo privado.
+2. Si usa Windows + SQLite, ya recibe `backend/data/ce_iccd.db`.
+3. Si usa Docker/PostgreSQL, debe restaurar `backups/ce-iccd.sql`.
+4. `backend/data/uploads` y `backend/data/project_submissions` ya vienen dentro de este repo privado.
 
 ### Backup y restore
 
@@ -168,10 +199,10 @@ En PowerShell:
 .\scripts\db-restore.ps1 -InputPath backups\ce-iccd.sql
 ```
 
-Guia detallada: [DEPLOY_DATABASE.md](/C:/Users/avega/Desktop/BOT_GABRIELITO/landing_page_movile/DEPLOY_DATABASE.md)
+Guia detallada: [DEPLOY_DATABASE.md](DEPLOY_DATABASE.md)
 
 Guia paso a paso para entrar a PostgreSQL, compartir la base y traspasar el proyecto:
-[README_BASE_DE_DATOS.md](/C:/Users/avega/Desktop/BOT_GABRIELITO/landing_page_movile/README_BASE_DE_DATOS.md)
+[README_BASE_DE_DATOS.md](README_BASE_DE_DATOS.md)
 
 ### Opcion 2: despliegue separado
 
@@ -183,4 +214,4 @@ Guia paso a paso para entrar a PostgreSQL, compartir la base y traspasar el proy
 - Cada modulo mantiene su propio README y dependencias.
 - Evitar codigo suelto en la raiz.
 - Configuraciones y scripts deben vivir en su modulo (`frontend/` o `backend/`).
-- Ver guia completa en [GOOD_PRACTICES.md](/C:/Users/avega/Desktop/BOT_GABRIELITO/landing_page_movile/GOOD_PRACTICES.md).
+- Ver guia completa en [GOOD_PRACTICES.md](GOOD_PRACTICES.md).
